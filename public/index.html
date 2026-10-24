@@ -15,6 +15,7 @@
    <label>Student ID<input name="studentId" maxlength="40" required aria-describedby="studentId-error"><span class="error" id="studentId-error"></span></label>
    <label>Case study<textarea name="caseStudy" rows="3" maxlength="3000" placeholder="For example: a library borrowing system." required aria-describedby="caseStudy-error"></textarea><span class="error" id="caseStudy-error"></span></label>
    <p class="filename-preview">Private repository <code id="prefix">Surname_Firstname_StudentID</code></p>
+   <div id="preflight-feedback" class="preflight-feedback" role="status" hidden><p id="preflight-message"></p><div class="actions" id="preflight-actions"></div></div>
    <p class="error" id="form-error" role="alert"></p>
    <div class="actions"><button id="create-portfolio" type="submit" disabled>Create portfolio <span aria-hidden="true">→</span></button><button class="text-button" type="button" id="return-to-run" hidden>Return to saved portfolio</button></div>
   </form>
@@ -24,7 +25,8 @@
   <div class="progress-caption"><span id="build-message" role="status" aria-live="polite">Creating your repository…</span><span id="elapsed">0s</span></div>
   <ol class="pipeline" id="pipeline"></ol>
   <p class="error" id="build-error" role="alert" hidden></p>
-  <div class="actions"><button type="button" id="back-to-repository" hidden>Back to repository</button><button type="button" id="retry" hidden>Retry remaining stages</button><a class="button secondary" id="running-repository" target="_blank" rel="noopener" hidden>View repository ↗</a></div>
+  <p class="hint" id="build-recovery" hidden></p>
+  <div class="actions"><button type="button" id="back-to-repository" hidden>Back to repository</button><button type="button" id="retry" hidden>Retry remaining stages</button><button type="button" class="secondary" id="revise-case" hidden>Edit case study</button><button type="button" class="secondary" id="reconnect-github" hidden>Reconnect GitHub</button><a class="button secondary" id="running-repository" target="_blank" rel="noopener" hidden>View repository ↗</a></div>
  </section>
  <section id="result-section" aria-labelledby="result-title" hidden>
   <h2 id="result-title" tabindex="-1">Your portfolio is ready.</h2><p id="result-case"></p>

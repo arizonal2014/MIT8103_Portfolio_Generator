@@ -68,3 +68,11 @@ test('correction prompt includes actual validation errors and refuses passing or
   assert.throws(()=>buildCopilotProbePrompt('Hospital appointments',JSON.stringify(hospitalCase())),/already passes/);
   assert.throws(()=>buildCopilotProbePrompt('Hospital appointments','x'.repeat(100001)),/100 KB/);
 });
+
+test('provider failures expose a useful category without copying private diagnostics',async()=>{
+ for(const [diagnostic,expected]of [['HTTP 429 premium requests exhausted','allowance'],['HTTP 401 invalid token','sign-in'],['ECONNRESET network failure','connect']]){
+  const root=await mkdtemp(path.join(tmpdir(),'mit8103-provider-failure-'));let calls=0;
+  const report=await runCopilotProbe({account:'sample',caseStudy:'Library system',allowLive:true,runsDirectory:root,runCommand:async()=>{calls++;if(calls===1)return{stdout:'fixture-secret'};if(calls===2)return{stdout:'sample'};throw Object.assign(Error('Failed'),{code:1,stderr:diagnostic+' fixture-secret private diagnostic detail'});}});
+  assert.equal(report.status,'provider_failed');assert.match(report.message,new RegExp(expected));assert.doesNotMatch(report.message,/fixture-secret|private diagnostic detail/);assert.doesNotMatch(await readFile(path.join(report.directory,'report.json'),'utf8'),/fixture-secret/);
+ }
+});

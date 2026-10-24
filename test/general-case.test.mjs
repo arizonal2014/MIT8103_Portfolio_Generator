@@ -89,3 +89,11 @@ test('initial retry keeps failed evidence and reruns the same job explicitly',as
  await flow.retryInitial(job.id,raw);await flow.settled(job.id);assert.equal(calls,2);assert.equal(flow.get(job.id).status,'failed');
  const attempts=await (await import('node:fs/promises')).readdir(path.join(root,'.attempts'));assert.equal(attempts.length,1);assert.ok((await readFile(path.join(root,'.attempts',attempts[0],'Workflow.json'),'utf8')).includes('failed'));
 });
+
+test('initial retry recovers an interrupted directory without a workflow record',async()=>{
+ const root=await mkdtemp(path.join(tmpdir(),'mit8103-setup-retry-')),id=randomUUID(),directory=path.join(root,'case-run-'+id);await mkdir(directory);await writeFile(path.join(directory,'Interrupted.txt'),'Original partial output');let calls=0;
+ const flow=createCaseWorkflow({runsDirectory:root,account:'fixture',generateSpec:async()=>{calls++;return{status:'provider_failed'};}});await flow.ready;
+ const raw={firstName:'Robin',surname:'Hart',studentId:'000987',caseStudy:'A garden plot allocation system.',provider:'copilot'};
+ await flow.retryInitial(id,raw);await flow.settled(id);assert.equal(calls,1);
+ const attempts=await (await import('node:fs/promises')).readdir(path.join(root,'.attempts'));assert.equal(attempts.length,1);assert.equal(await readFile(path.join(root,'.attempts',attempts[0],'Interrupted.txt'),'utf8'),'Original partial output');
+});

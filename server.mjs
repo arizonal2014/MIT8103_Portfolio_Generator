@@ -18,6 +18,7 @@ const routes = new Map([
   ['/style.css', ['public/style.css', 'text/css']],
   ['/app.mjs', ['public/app.mjs', 'text/javascript']],
   ['/shared.mjs', ['shared.mjs', 'text/javascript']],
+  ['/case-input.mjs', ['case-input.mjs', 'text/javascript']],
   ['/fonts/IBMPlexSans-Regular.woff2', ['public/fonts/IBMPlexSans-Regular.woff2', 'font/woff2']],
   ['/fonts/IBMPlexSans-Medium.woff2', ['public/fonts/IBMPlexSans-Medium.woff2', 'font/woff2']],
   ['/fonts/IBMPlexSans-SemiBold.woff2', ['public/fonts/IBMPlexSans-SemiBold.woff2', 'font/woff2']],
@@ -29,9 +30,9 @@ const securityHeaders = {
   'Referrer-Policy': 'no-referrer',
 };
 
-export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAccount=process.env.MIT8103_PILOT_ACCOUNT, access=workspaceAccess() } = {}) {
+export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAccount=process.env.MIT8103_PILOT_ACCOUNT, access=workspaceAccess(),pilotWorkflow } = {}) {
   const githubLogin=createGithubLogin(root);
-  const workflow=createGuidedWorkflow(createCaseWorkflow({runsDirectory,account:pilotAccount}),{runsDirectory,root});
+  const workflow=pilotWorkflow||createGuidedWorkflow(createCaseWorkflow({runsDirectory,account:pilotAccount}),{runsDirectory,root});
   return http.createServer(async (req, res) => {
     const json = (status, body) => { res.writeHead(status, { ...securityHeaders, 'Content-Type': 'application/json' }); res.end(JSON.stringify(body)); };
     try {
@@ -61,7 +62,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
         const data = await readFile(path.join(root, file));
         res.writeHead(200, { ...securityHeaders, 'Content-Type': type==='font/woff2'?type:`${type}; charset=utf-8` }); res.end(data); return;
       }
-      if (req.method !== 'POST' || (!queryRoute&&!transactionRoute&&!mongoRoute&&!guidedRoute)&&!['/api/scaffold','/api/case-spec/check','/api/provider/prepare','/api/pilot/start','/api/github/login'].includes(url.pathname)) { json(404, { error: 'Not found.' }); return; }
+      if (req.method !== 'POST' || (!queryRoute&&!transactionRoute&&!mongoRoute&&!guidedRoute)&&!['/api/scaffold','/api/case-spec/check','/api/provider/prepare','/api/pilot/start','/api/pilot/preflight','/api/github/login'].includes(url.pathname)) { json(404, { error: 'Not found.' }); return; }
       // The UI is local/private. Reject cross-origin writes and non-JSON forms.
       const origin = req.headers.origin;
       if (!access.originAllowed(origin,req.headers.host) || req.headers['content-type']?.split(';')[0] !== 'application/json') {
@@ -82,12 +83,13 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
       if(queryRoute){json(202,await workflow.startQueries(queryRoute[1],input));return;}
       if(url.pathname==='/api/case-spec/check'){const result=validateCaseSpec(input?.spec);json(result.valid?200:422,result);return;}
       if(url.pathname==='/api/provider/prepare'){json(200,prepareProviderRequest(input));return;}
+      if(url.pathname==='/api/pilot/preflight'){json(200,await workflow.preflight(input));return;}
       if(url.pathname==='/api/pilot/start'){json(202,await workflow.start(input));return;}
       const result = await createScaffold(input, runsDirectory);
       json(201, result);
     } catch (error) {
       if (error instanceof InputError) json(422, { error: error.message, fields: error.errors });
-      else if(error.statusCode)json(error.statusCode,{error:error.message});
+      else if(error.statusCode)json(error.statusCode,{error:error.message,...(error.preflight?{preflight:error.preflight}:{})});
       else json(500, { error: 'Could not complete the request. Check workspace permissions and free space. Any partial run is retained; nothing was overwritten.' });
     }
   });

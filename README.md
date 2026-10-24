@@ -12,6 +12,8 @@ Wait for setup, then open **Ports → 4310 → Open in Browser**. Keep the port 
 2. **Build:** follow the pipeline. Expand a stage to read its log or open its commit. Failed stages show **Retry remaining stages**.
 3. **Repository:** select **Open my portfolio**. Your private repository is named `Surname_Firstname_StudentID`, with the five portfolio folders at its root. Edit the final summary there.
 
+The app checks case wording, naming, repository availability, Docker and the installed Copilot command before generation. Common typos offer a correction; vague titles ask for a subject. An existing portfolio opens its repository or saved run rather than being overwritten. Copilot authentication and allowance are checked during the provider request, without an extra AI request.
+
 Completed stages are committed and pushed automatically with their actual timestamps. The repository contains the assessment files; the generator code stays in its workspace. Existing unrelated repositories and edits made on GitHub are not overwritten.
 
 ## Output
