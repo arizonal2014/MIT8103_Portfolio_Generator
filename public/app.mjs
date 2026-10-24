@@ -131,6 +131,7 @@ function displayJob(job){
   runQueries.textContent=job.portfolio2?.status==='complete'?'Portfolio 2 complete':job.portfolio2?.status==='failed'||job.portfolio2?.status==='interrupted'?'Retry Portfolio 2':'Run Portfolio 2';
   document.querySelector('#query-message').textContent=job.portfolio2?`${job.portfolio2.status}: ${job.portfolio2.message}`:'';
   document.querySelector('#pilot-result').hidden=false;
+  document.querySelector('#pilot-result h2').textContent=job.title||'Your case study progress';
   document.querySelector('#pilot-message').textContent=job.guided?`${job.guided.status}: ${job.guided.message}`:`${job.status}: ${job.message}`;
   renderList('#pilot-steps',job.steps.map(s=>`${s.name} — ${s.status}`));
   document.querySelector('#pilot-output').textContent=job.outputDirectory?`Saved in: ${job.outputDirectory}`:'';
@@ -143,7 +144,7 @@ async function followJob(id){
   while(true){
     try{
       const response=await fetch(`/api/pilot/jobs/${id}`);const job=await response.json();
-      if(response.status===404){sessionStorage.removeItem('case-generator-job');document.querySelector('#pilot-result').hidden=false;document.querySelector('#pilot-message').textContent='The server restarted. Earlier files remain on disk; start a new run when ready.';busy(false);return;}
+      if(response.status===404){localStorage.removeItem('case-generator-job');sessionStorage.removeItem('case-generator-job');document.querySelector('#pilot-result').hidden=false;document.querySelector('#pilot-message').textContent='The server restarted. Earlier files remain on disk; start a new run when ready.';busy(false);return;}
       if(!response.ok)throw new Error(job.error||'Could not read the run.');
       failures=0;displayJob(job);
       if(job.guided?.status!=='running'&&job.status!=='running'&&job.portfolio2?.status!=='running'&&job.portfolio3?.status!=='running'&&job.portfolio4?.status!=='running'){busy(false);return;}
@@ -166,7 +167,7 @@ runPilot.addEventListener('click',async()=>{
   try{
     const response=await fetch('/api/pilot/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...input,requestId,allowLive:true,runAll:true,saveToGithub:document.querySelector('#save-github').checked})});
     const job=await response.json();if(!response.ok)throw new Error(job.error||Object.values(job.fields||{}).join(' '));
-    sessionStorage.setItem('case-generator-job',job.id);displayJob(job);await followJob(job.id);
+    localStorage.setItem('case-generator-job',job.id);displayJob(job);await followJob(job.id);
   }catch(error){status.textContent=`Could not start generation: ${error.message}`;busy(false);}
 });
 (async()=>{
@@ -178,7 +179,7 @@ runPilot.addEventListener('click',async()=>{
     document.querySelector('#repository-status').textContent=pilotConfig.repository?.message||'';
     document.querySelector('#save-github').checked=Boolean(connected);
     document.querySelector('#save-github').disabled=!connected;
-    const id=sessionStorage.getItem('case-generator-job');if(id){busy(true);await followJob(id);}
+    const id=localStorage.getItem('case-generator-job')||sessionStorage.getItem('case-generator-job')||pilotConfig.latestJob;if(id){localStorage.setItem('case-generator-job',id);busy(true);await followJob(id);}
   }catch{document.querySelector('#pilot-config').textContent='Could not check generation availability. Check the local server.';}
 })();
 

@@ -33,7 +33,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
       if(!access.hostAllowed(req.headers.host)){json(403,{error:'Use this workspace\u2019s generator URL.'});return;}
       if(req.method==='GET'&&url.pathname==='/api/health'){json(200,{service:'mit8103-generator',workspace:root+path.sep,pid:process.pid});return;}
       await workflow.ready;
-      if(req.method==='GET'&&url.pathname==='/api/pilot/config'){json(200,{enabled:workflow.enabled,account:workflow.account,repository:await workflow.context,scenario:'A library borrowing system for members, books, physical copies and loans. Keep borrowing and return history and allow only one open loan per copy.'});return;}
+      if(req.method==='GET'&&url.pathname==='/api/pilot/config'){json(200,{enabled:workflow.enabled,account:workflow.account,repository:await workflow.context,latestJob:workflow.latestId(),scenario:'A library borrowing system for members, books, physical copies and loans. Keep borrowing and return history and allow only one open loan per copy.'});return;}
       const guidedRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})\/(continue|review)$/);
       const mongoRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})\/mongodb$/);
       const transactionRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})\/transactions$/);
