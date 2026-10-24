@@ -105,23 +105,32 @@ const runQueries=document.querySelector('#run-queries');
 const runTransactions=document.querySelector('#run-transactions');
 const runMongo=document.querySelector('#run-mongo');
 const runPilot=document.querySelector('#run-pilot');
-function busy(value){pilotBusy=value;for(const field of form.elements)field.disabled=value;runPilot.disabled=value||!pilotConfig?.enabled;}
+function busy(value){pilotBusy=value;for(const field of form.elements)field.disabled=value;runPilot.disabled=value||!pilotConfig?.enabled;document.querySelector('#save-github').disabled=value||!pilotConfig?.repository?.verified;}
 function displayJob(job){
   currentJob=job;
-  document.querySelector('#mongo-controls').hidden=job.portfolio3?.status!=='complete';
+  const running=job.guided?.status==='running';
+  document.querySelector('#finish-controls').hidden=job.status!=='complete';
+  document.querySelector('#guided-message').textContent=job.guided?job.guided.message:'Continue to finish all remaining portfolios, screenshots and the summary.';
+  document.querySelector('#continue-run').hidden=Boolean(job.finish)&&!['failed','interrupted'].includes(job.guided?.status);
+  document.querySelector('#continue-run').disabled=running;
+  document.querySelector('#review-form').hidden=!job.finish;
+  document.querySelector('#finish-review').disabled=running;
+  if(job.finish?.review&&!document.querySelector('#reflection-text').value)document.querySelector('#reflection-text').value=job.finish.review.reflection;
+
+  document.querySelector('#mongo-controls').hidden=Boolean(job.guided)||job.portfolio3?.status!=='complete';
   runMongo.disabled=job.portfolio3?.status!=='complete'||['running','complete'].includes(job.portfolio4?.status);
   runMongo.textContent=job.portfolio4?.status==='complete'?'Portfolio 4 complete':['failed','interrupted'].includes(job.portfolio4?.status)?'Retry Portfolio 4':'Run Portfolio 4';
   document.querySelector('#mongo-message').textContent=job.portfolio4?`${job.portfolio4.status}: ${job.portfolio4.message}`:'';
-  document.querySelector('#transaction-controls').hidden=job.portfolio2?.status!=='complete';
+  document.querySelector('#transaction-controls').hidden=Boolean(job.guided)||job.portfolio2?.status!=='complete';
   runTransactions.disabled=job.portfolio2?.status!=='complete'||['running','complete'].includes(job.portfolio3?.status);
   runTransactions.textContent=job.portfolio3?.status==='complete'?'Portfolio 3 complete':['failed','interrupted'].includes(job.portfolio3?.status)?'Retry Portfolio 3':'Run Portfolio 3';
   document.querySelector('#transaction-message').textContent=job.portfolio3?`${job.portfolio3.status}: ${job.portfolio3.message}`:'';
-  document.querySelector('#query-controls').hidden=job.status!=='complete';
+  document.querySelector('#query-controls').hidden=Boolean(job.guided)||job.status!=='complete';
   runQueries.disabled=job.status!=='complete'||job.portfolio2?.status==='running'||job.portfolio2?.status==='complete';
   runQueries.textContent=job.portfolio2?.status==='complete'?'Portfolio 2 complete':job.portfolio2?.status==='failed'||job.portfolio2?.status==='interrupted'?'Retry Portfolio 2':'Run Portfolio 2';
   document.querySelector('#query-message').textContent=job.portfolio2?`${job.portfolio2.status}: ${job.portfolio2.message}`:'';
   document.querySelector('#pilot-result').hidden=false;
-  document.querySelector('#pilot-message').textContent=`${job.status}: ${job.message}`;
+  document.querySelector('#pilot-message').textContent=job.guided?`${job.guided.status}: ${job.guided.message}`:`${job.status}: ${job.message}`;
   renderList('#pilot-steps',job.steps.map(s=>`${s.name} — ${s.status}`));
   document.querySelector('#pilot-output').textContent=job.outputDirectory?`Saved in: ${job.outputDirectory}`:'';
   const files=document.querySelector('#pilot-files'),other=document.querySelector('#other-files');files.replaceChildren();other.replaceChildren();
@@ -136,7 +145,7 @@ async function followJob(id){
       if(response.status===404){sessionStorage.removeItem('case-generator-job');document.querySelector('#pilot-result').hidden=false;document.querySelector('#pilot-message').textContent='The server restarted. Earlier files remain on disk; start a new run when ready.';busy(false);return;}
       if(!response.ok)throw new Error(job.error||'Could not read the run.');
       failures=0;displayJob(job);
-      if(job.status!=='running'&&job.portfolio2?.status!=='running'&&job.portfolio3?.status!=='running'&&job.portfolio4?.status!=='running'){busy(false);return;}
+      if(job.guided?.status!=='running'&&job.status!=='running'&&job.portfolio2?.status!=='running'&&job.portfolio3?.status!=='running'&&job.portfolio4?.status!=='running'){busy(false);return;}
     }catch(error){
       if(++failures>=3){document.querySelector('#pilot-message').textContent=`Progress connection stopped: ${error.message} Saved output remains on disk. Reload to reconnect; do not start a duplicate run.`;busy(false);return;}
     }
@@ -154,7 +163,7 @@ runPilot.addEventListener('click',async()=>{
   if(input.provider!=='copilot'){status.textContent='Select Copilot for live generation. Other tools are not connected yet.';return;}
   busy(true);const requestId=crypto.randomUUID();
   try{
-    const response=await fetch('/api/pilot/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...input,requestId,allowLive:true})});
+    const response=await fetch('/api/pilot/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...input,requestId,allowLive:true,runAll:true,saveToGithub:document.querySelector('#save-github').checked})});
     const job=await response.json();if(!response.ok)throw new Error(job.error||Object.values(job.fields||{}).join(' '));
     sessionStorage.setItem('case-generator-job',job.id);displayJob(job);await followJob(job.id);
   }catch(error){status.textContent=`Could not start generation: ${error.message}`;busy(false);}
@@ -164,6 +173,10 @@ runPilot.addEventListener('click',async()=>{
     const response=await fetch('/api/pilot/config');if(!response.ok)throw new Error();pilotConfig=await response.json();
     document.querySelector('#pilot-config').textContent=pilotConfig.enabled?`Connected account: ${pilotConfig.account}. Uses that account's Copilot allowance.`:'Live generation is disabled on this server. Local checks and scaffolds remain available.';
     runPilot.disabled=!pilotConfig.enabled;
+    const connected=pilotConfig.repository?.verified;
+    document.querySelector('#repository-status').textContent=pilotConfig.repository?.message||'';
+    document.querySelector('#save-github').checked=Boolean(connected);
+    document.querySelector('#save-github').disabled=!connected;
     const id=sessionStorage.getItem('case-generator-job');if(id){busy(true);await followJob(id);}
   }catch{document.querySelector('#pilot-config').textContent='Could not check generation availability. Check the local server.';}
 })();
@@ -197,3 +210,11 @@ runMongo.addEventListener('click',async()=>{
     displayJob(job);await followJob(job.id);
   }catch(error){document.querySelector('#mongo-message').textContent=error.message;runMongo.disabled=false;busy(false);}
 });
+
+async function guidedAction(action,payload){
+ if(pilotBusy||!currentJob)return;busy(true);
+ try{const response=await fetch(`/api/pilot/jobs/${currentJob.id}/${action}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const job=await response.json();if(!response.ok)throw new Error(job.error||'Could not continue.');displayJob(job);await followJob(job.id);}
+ catch(error){document.querySelector('#guided-message').textContent=error.message;busy(false);}
+}
+document.querySelector('#continue-run').addEventListener('click',()=>guidedAction('continue',{allowRun:true,saveToGithub:document.querySelector('#save-github').checked}));
+document.querySelector('#review-form').addEventListener('submit',event=>{event.preventDefault();const raw=new FormData(event.target);guidedAction('review',{reflection:raw.get('reflection'),reviewed:raw.get('reviewed')==='on'});});

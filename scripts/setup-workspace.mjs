@@ -3,6 +3,7 @@ import {promisify} from 'node:util';
 const run=promisify(execFile);
 try{
   console.log('Installing the generator dependencies…');await run('npm',['ci'],{timeout:300000,maxBuffer:1000000});
+  console.log('Installing the isolated report renderer…');await run('npx',['playwright','install',...(process.platform==='linux'?['--with-deps']:[]),'chromium'],{timeout:300000,maxBuffer:2000000});
   console.log('Preparing the temporary database runtime…');let ready=false;
   for(let i=0;i<30;i++){try{await run('docker',['info','--format','{{.ServerVersion}}'],{timeout:5000,maxBuffer:10000});ready=true;break;}catch{await new Promise(r=>setTimeout(r,2000));}}
   if(!ready)throw new Error('Docker did not start. Rebuild the Codespace container, then run npm run setup:workspace.');

@@ -8,6 +8,7 @@ import { caseSpecSchema, validateCaseSpec } from './lib/case-spec.mjs';
 import { libraryCase, hospitalCase } from './examples/cases.mjs';
 import {inspectProviders,prepareProviderRequest}from './lib/providers.mjs';
 import {createCaseWorkflow}from './lib/case-workflow.mjs';
+import {createGuidedWorkflow}from './lib/guided-workflow.mjs';
 import {workspaceAccess}from './lib/workspace-access.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -24,7 +25,7 @@ const securityHeaders = {
 };
 
 export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAccount=process.env.MIT8103_PILOT_ACCOUNT, access=workspaceAccess() } = {}) {
-  const workflow=createCaseWorkflow({runsDirectory,account:pilotAccount});
+  const workflow=createGuidedWorkflow(createCaseWorkflow({runsDirectory,account:pilotAccount}),{runsDirectory,root});
   return http.createServer(async (req, res) => {
     const json = (status, body) => { res.writeHead(status, { ...securityHeaders, 'Content-Type': 'application/json' }); res.end(JSON.stringify(body)); };
     try {
@@ -32,16 +33,17 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
       if(!access.hostAllowed(req.headers.host)){json(403,{error:'Use this workspace\u2019s generator URL.'});return;}
       if(req.method==='GET'&&url.pathname==='/api/health'){json(200,{service:'mit8103-generator',workspace:root+path.sep,pid:process.pid});return;}
       await workflow.ready;
-      if(req.method==='GET'&&url.pathname==='/api/pilot/config'){json(200,{enabled:workflow.enabled,account:workflow.account,scenario:'A library borrowing system for members, books, physical copies and loans. Keep borrowing and return history and allow only one open loan per copy.'});return;}
+      if(req.method==='GET'&&url.pathname==='/api/pilot/config'){json(200,{enabled:workflow.enabled,account:workflow.account,repository:await workflow.context,scenario:'A library borrowing system for members, books, physical copies and loans. Keep borrowing and return history and allow only one open loan per copy.'});return;}
+      const guidedRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})\/(continue|review)$/);
       const mongoRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})\/mongodb$/);
       const transactionRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})\/transactions$/);
       const queryRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})\/optimise$/);
       const jobRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})(?:\/files\/([a-z-]+))?$/);
       if(req.method==='GET'&&jobRoute){
         if(!jobRoute[2]){const job=workflow.get(jobRoute[1]);json(job?200:404,job||{error:'Run not found in this server session. Saved files remain on disk.'});return;}
-        const artifact=workflow.artifact(jobRoute[1],jobRoute[2]);if(!artifact){json(404,{error:'File not available.'});return;}
-        const html=artifact.path.endsWith('.html'),svg=artifact.path.endsWith('.svg');const data=await readFile(artifact.path);
-        res.writeHead(200,{...securityHeaders,...(html||svg?{'Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'"}:{}),'Content-Disposition':`inline; filename*=UTF-8''${encodeURIComponent(path.basename(artifact.path))}`,'Content-Type':html?'text/html; charset=utf-8':svg?'image/svg+xml; charset=utf-8':'text/plain; charset=utf-8'});res.end(data);return;
+        const artifact=await workflow.artifact(jobRoute[1],jobRoute[2]);if(!artifact){json(404,{error:'File not available.'});return;}
+        const html=artifact.path.endsWith('.html'),svg=artifact.path.endsWith('.svg'),pdf=artifact.path.endsWith('.pdf'),zip=artifact.path.endsWith('.zip');const data=await readFile(artifact.path);
+        res.writeHead(200,{...securityHeaders,...(html||svg?{'Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'"}:{}),'Content-Disposition':`${zip?'attachment':'inline'}; filename*=UTF-8''${encodeURIComponent(path.basename(artifact.path))}`,'Content-Type':html?'text/html; charset=utf-8':svg?'image/svg+xml; charset=utf-8':pdf?'application/pdf':zip?'application/zip':'text/plain; charset=utf-8'});res.end(data);return;
       }
       if(req.method==='GET'&&url.pathname==='/api/case-spec/schema'){json(200,caseSpecSchema);return;}
       if(req.method==='GET'&&url.pathname==='/api/providers'){json(200,await inspectProviders());return;}
@@ -52,7 +54,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
         const data = await readFile(path.join(root, file));
         res.writeHead(200, { ...securityHeaders, 'Content-Type': `${type}; charset=utf-8` }); res.end(data); return;
       }
-      if (req.method !== 'POST' || (!queryRoute&&!transactionRoute&&!mongoRoute)&&!['/api/scaffold','/api/case-spec/check','/api/provider/prepare','/api/pilot/start'].includes(url.pathname)) { json(404, { error: 'Not found.' }); return; }
+      if (req.method !== 'POST' || (!queryRoute&&!transactionRoute&&!mongoRoute&&!guidedRoute)&&!['/api/scaffold','/api/case-spec/check','/api/provider/prepare','/api/pilot/start'].includes(url.pathname)) { json(404, { error: 'Not found.' }); return; }
       // The UI is local/private. Reject cross-origin writes and non-JSON forms.
       const origin = req.headers.origin;
       if (!access.originAllowed(origin,req.headers.host) || req.headers['content-type']?.split(';')[0] !== 'application/json') {
@@ -66,6 +68,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
       const body=Buffer.concat(chunks).toString('utf8');
       let input;
       try { input = JSON.parse(body); } catch { json(400, { error: 'The form could not be read. Try again.' }); return; }
+      if(guidedRoute){json(202,await workflow[guidedRoute[2]==='review'?'review':'continueRun'](guidedRoute[1],input));return;}
       if(mongoRoute){json(202,await workflow.startMongo(mongoRoute[1],input));return;}
       if(transactionRoute){json(202,await workflow.startTransactions(transactionRoute[1],input));return;}
       if(queryRoute){json(202,await workflow.startQueries(queryRoute[1],input));return;}
@@ -77,7 +80,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
     } catch (error) {
       if (error instanceof InputError) json(422, { error: error.message, fields: error.errors });
       else if(error.statusCode)json(error.statusCode,{error:error.message});
-      else json(500, { error: 'Could not create the scaffold. Check workspace permissions and free space. Any partial run is retained; nothing was overwritten.' });
+      else json(500, { error: 'Could not complete the request. Check workspace permissions and free space. Any partial run is retained; nothing was overwritten.' });
     }
   });
 }

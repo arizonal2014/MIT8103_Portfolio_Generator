@@ -1,13 +1,13 @@
 # Start your portfolio
 
-1. Open [the generator template](https://github.com/arizonal2014/MIT8103_Portfolio_Generator/generate). Create a **private** repository named `Surname_Firstname_StudentID`. Replace the example with your own details.
-2. In your new repository, choose **Code → Codespaces → Create codespace on main**. Wait for setup. The generator opens automatically. If it does not, open **Ports → 4310 → Open in Browser**.
-3. Enter your name, student ID and case study. Choose **Copilot**, then click **Generate and test my database**. Review the resulting documents and database evidence. Then click **Run Portfolio 2** and review its query results and index comparison. Continue with **Run Portfolio 3** for commit, rollback and concurrency, then **Run Portfolio 4** for MongoDB documents and queries.
+1. [Create a private copy](https://github.com/arizonal2014/MIT8103_Portfolio_Generator/generate) named `Surname_Firstname_StudentID`.
+2. Open **Code → Codespaces → Create codespace on main**. Setup installs the app, databases and report renderer. Open **Ports → 4310 → Open in Browser** if the app does not open automatically.
+3. Enter your name, ID and case study. Click **Generate my portfolio**. Leave **Save real checkpoints** checked to save completed stages to your own repository.
+4. Read the reports and draft PDF. Add your own reflection, check the review box and click **Save reflection and final package**.
+5. Download the ZIP and PDF. Confirm the repository contains your work and your lecturer can access it, then submit using the assessment form yourself.
 
-The repository is already connected to this Codespace. Your own GitHub identity is used; the template author's account is not included. Copilot access/allowance is required for the currently connected AI option.
+Your Codespace is connected to your repository. Copilot uses your own account and allowance. No author's account or token is included. Keep port 4310 **Private**.
 
-After reviewing your results, run **`npm run save`** in the Codespace terminal. This copies the latest successful portfolio into its correctly named folder, commits that real checkpoint and pushes it to **your** repository. It excludes private run diagnostics. Repeat it after later changes you have reviewed; it does not invent historical commits.
+If a stage fails, read the error and use **Continue remaining steps** after fixing it. A failed initial case design needs a corrected new run. Reloading the page reconnects to your saved run; it does not start another AI request.
 
-If the page does not start, run `npm run workspace` in the Codespace terminal. Keep port 4310 **Private**. Stop your Codespace after using it to stop consuming compute time.
-
-**Current scope:** Portfolios 1–4 generation work. Portfolio 5, automatic screenshots and the final summary are still being built. Review all generated work before using it in your assessment.
+To start a stopped app, run `npm run workspace`. To save manually, run `npm run save`. Commits use real timestamps and completed results. Stop the Codespace when you finish.
