@@ -107,6 +107,7 @@ const runMongo=document.querySelector('#run-mongo');
 const runPilot=document.querySelector('#run-pilot');
 function busy(value){pilotBusy=value;for(const field of form.elements)field.disabled=value;runPilot.disabled=value||!pilotConfig?.enabled;document.querySelector('#save-github').disabled=value||!pilotConfig?.repository?.verified;}
 function displayJob(job){
+  if(currentJob?.id!==job.id){document.querySelector('#reflection-text').value='';document.querySelector('#review-form input[name=reviewed]').checked=false;}
   currentJob=job;
   const running=job.guided?.status==='running';
   document.querySelector('#finish-controls').hidden=job.status!=='complete';
@@ -135,7 +136,7 @@ function displayJob(job){
   document.querySelector('#pilot-output').textContent=job.outputDirectory?`Saved in: ${job.outputDirectory}`:'';
   const files=document.querySelector('#pilot-files'),other=document.querySelector('#other-files');files.replaceChildren();other.replaceChildren();
   for(const file of job.files){const li=document.createElement('li'),a=document.createElement('a');a.href=file.url;a.textContent=file.label;a.target='_blank';a.rel='noopener';li.append(a);(file.primary?files:other).append(li);}
-  if(job.stages)renderStages(job.stages);
+  renderStages(job.stages||createStagePlan());
 }
 async function followJob(id){
   let failures=0;

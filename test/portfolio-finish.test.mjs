@@ -31,3 +31,12 @@ test('guided continuation skips completed database work and exposes final files'
 test('guided failure preserves completed work and never marks missing exercise complete',async()=>{const{flow,id,runs}=await fixture(true);await flow.continueRun(id,{allowRun:true});await flow.guidedSettled(id);assert.equal(flow.get(id).guided.status,'failed');assert.equal(flow.get(id).portfolio2.status,'complete');assert.equal(flow.get(id).portfolio4.status,'failed');assert.equal(flow.get(id).finish,undefined);assert.equal(runs(),1);});
 test('automatic commits require a verified own private repository',async()=>{const{flow,id}=await fixture();await assert.rejects(flow.continueRun(id,{allowRun:true,saveToGithub:true}));});
 test('restart keeps final results and marks unfinished guided execution interrupted',async()=>{const{flow,id,root}=await fixture();await flow.continueRun(id,{allowRun:true});await flow.guidedSettled(id);const state=JSON.parse(await readFile(path.join(root,'case-run-'+id,'Guided.json')));state.status='running';await writeFile(path.join(root,'case-run-'+id,'Guided.json'),JSON.stringify(state));const restored=createGuidedWorkflow({ready:Promise.resolve(),get:()=>({id,files:[]})},{runsDirectory:root,root,inspect:async()=>({verified:false})});await restored.ready;assert.equal(restored.get(id).guided.status,'interrupted');assert.ok(restored.get(id).files.some(f=>f.url.endsWith('/summary')));});
+
+test('full guided run executes P2, P3 and P4 in order and stops at review',async()=>{
+ const root=await mkdtemp(path.join(os.tmpdir(),'guided-sequence-')),id='22345678-1234-1234-1234-123456789abc';await mkdir(path.join(root,'case-run-'+id));
+ const job={id,status:'complete',prefix:'Doe_Ada_0001',files:[]},sequence=[];
+ const base={ready:Promise.resolve(),get:()=>structuredClone(job),settled:async()=>{},queriesSettled:async()=>{},transactionsSettled:async()=>{},mongoSettled:async()=>{}};
+ for(const[n,method]of[[2,'startQueries'],[3,'startTransactions'],[4,'startMongo']])base[method]=async()=>{sequence.push(n);job['portfolio'+n]={status:'complete'};};
+ const flow=createGuidedWorkflow(base,{runsDirectory:root,root,inspect:async()=>({verified:false}),finish:async()=>{sequence.push(5);return{status:'awaiting_review',message:'Review',stages:[],submissionReady:false};}});await flow.ready;
+ await flow.continueRun(id,{allowRun:true});await flow.guidedSettled(id);assert.deepEqual(sequence,[2,3,4,5]);assert.equal(flow.get(id).guided.status,'awaiting_review');assert.equal(flow.get(id).submissionReady,false);
+});

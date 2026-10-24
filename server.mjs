@@ -42,8 +42,8 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
       if(req.method==='GET'&&jobRoute){
         if(!jobRoute[2]){const job=workflow.get(jobRoute[1]);json(job?200:404,job||{error:'Run not found in this server session. Saved files remain on disk.'});return;}
         const artifact=await workflow.artifact(jobRoute[1],jobRoute[2]);if(!artifact){json(404,{error:'File not available.'});return;}
-        const html=artifact.path.endsWith('.html'),svg=artifact.path.endsWith('.svg'),pdf=artifact.path.endsWith('.pdf'),zip=artifact.path.endsWith('.zip');const data=await readFile(artifact.path);
-        res.writeHead(200,{...securityHeaders,...(html||svg?{'Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'"}:{}),'Content-Disposition':`${zip?'attachment':'inline'}; filename*=UTF-8''${encodeURIComponent(path.basename(artifact.path))}`,'Content-Type':html?'text/html; charset=utf-8':svg?'image/svg+xml; charset=utf-8':pdf?'application/pdf':zip?'application/zip':'text/plain; charset=utf-8'});res.end(data);return;
+        const html=artifact.path.endsWith('.html'),svg=artifact.path.endsWith('.svg'),pdf=artifact.path.endsWith('.pdf'),zip=artifact.path.endsWith('.zip'),png=artifact.path.endsWith('.png');const data=await readFile(artifact.path);
+        res.writeHead(200,{...securityHeaders,...(html||svg?{'Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'"}:{}),'Content-Disposition':`${zip?'attachment':'inline'}; filename*=UTF-8''${encodeURIComponent(path.basename(artifact.path))}`,'Content-Type':html?'text/html; charset=utf-8':svg?'image/svg+xml; charset=utf-8':pdf?'application/pdf':zip?'application/zip':png?'image/png':'text/plain; charset=utf-8'});res.end(data);return;
       }
       if(req.method==='GET'&&url.pathname==='/api/case-spec/schema'){json(200,caseSpecSchema);return;}
       if(req.method==='GET'&&url.pathname==='/api/providers'){json(200,await inspectProviders());return;}
