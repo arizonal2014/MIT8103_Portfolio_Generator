@@ -103,10 +103,15 @@ document.querySelector('#validate-case').addEventListener('click',async()=>{
 let pilotConfig=null,pilotBusy=false,currentJob=null;
 const runQueries=document.querySelector('#run-queries');
 const runTransactions=document.querySelector('#run-transactions');
+const runMongo=document.querySelector('#run-mongo');
 const runPilot=document.querySelector('#run-pilot');
 function busy(value){pilotBusy=value;for(const field of form.elements)field.disabled=value;runPilot.disabled=value||!pilotConfig?.enabled;}
 function displayJob(job){
   currentJob=job;
+  document.querySelector('#mongo-controls').hidden=job.portfolio3?.status!=='complete';
+  runMongo.disabled=job.portfolio3?.status!=='complete'||['running','complete'].includes(job.portfolio4?.status);
+  runMongo.textContent=job.portfolio4?.status==='complete'?'Portfolio 4 complete':['failed','interrupted'].includes(job.portfolio4?.status)?'Retry Portfolio 4':'Run Portfolio 4';
+  document.querySelector('#mongo-message').textContent=job.portfolio4?`${job.portfolio4.status}: ${job.portfolio4.message}`:'';
   document.querySelector('#transaction-controls').hidden=job.portfolio2?.status!=='complete';
   runTransactions.disabled=job.portfolio2?.status!=='complete'||['running','complete'].includes(job.portfolio3?.status);
   runTransactions.textContent=job.portfolio3?.status==='complete'?'Portfolio 3 complete':['failed','interrupted'].includes(job.portfolio3?.status)?'Retry Portfolio 3':'Run Portfolio 3';
@@ -131,7 +136,7 @@ async function followJob(id){
       if(response.status===404){sessionStorage.removeItem('case-generator-job');document.querySelector('#pilot-result').hidden=false;document.querySelector('#pilot-message').textContent='The server restarted. Earlier files remain on disk; start a new run when ready.';busy(false);return;}
       if(!response.ok)throw new Error(job.error||'Could not read the run.');
       failures=0;displayJob(job);
-      if(job.status!=='running'&&job.portfolio2?.status!=='running'&&job.portfolio3?.status!=='running'){busy(false);return;}
+      if(job.status!=='running'&&job.portfolio2?.status!=='running'&&job.portfolio3?.status!=='running'&&job.portfolio4?.status!=='running'){busy(false);return;}
     }catch(error){
       if(++failures>=3){document.querySelector('#pilot-message').textContent=`Progress connection stopped: ${error.message} Saved output remains on disk. Reload to reconnect; do not start a duplicate run.`;busy(false);return;}
     }
@@ -181,4 +186,14 @@ runTransactions.addEventListener('click',async()=>{
     const job=await response.json();if(!response.ok)throw new Error(job.error||'Could not start Portfolio 3.');
     displayJob(job);await followJob(job.id);
   }catch(error){document.querySelector('#transaction-message').textContent=error.message;runTransactions.disabled=false;busy(false);}
+});
+
+runMongo.addEventListener('click',async()=>{
+  if(pilotBusy||currentJob?.portfolio3?.status!=='complete')return;
+  busy(true);runMongo.disabled=true;
+  try{
+    const response=await fetch(`/api/pilot/jobs/${currentJob.id}/mongodb`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({allowRun:true})});
+    const job=await response.json();if(!response.ok)throw new Error(job.error||'Could not start Portfolio 4.');
+    displayJob(job);await followJob(job.id);
+  }catch(error){document.querySelector('#mongo-message').textContent=error.message;runMongo.disabled=false;busy(false);}
 });

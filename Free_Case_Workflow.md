@@ -8,7 +8,7 @@ The generator accepts a free-text case study. It no longer requires the hospital
 2. Select **Copilot**, then click **Generate and test my database**.
 3. Follow progress and open the generated case description, design, ER diagram, normalisation and real database results. Additional SQL and logs are under **SQL, logs and other files**.
 
-The server runs inside your Codespace or on your own computer. After reviewing a successful run, use `npm run save` to commit and push the named output to your own repository. Portfolios 4 and 5, automatic screenshots and the final summary remain pending. No assessment is submitted automatically.
+The server runs inside your Codespace or on your own computer. After reviewing a successful run, use `npm run save` to commit and push the named output to your own repository. Portfolio 5, automatic screenshots and the final summary remain pending. No assessment is submitted automatically.
 
 ## Start locally
 
@@ -25,7 +25,7 @@ The retained environment-variable name configures the approved Copilot account; 
 2. Copilot generates a separate execution package: explicit rule expressions, valid records, record-rejection tests and the normalisation-example root. It receives the case model, not the student's name or ID. One correction is allowed using actual validation/database errors. Total model calls are bounded at four.
 3. The deterministic renderer generates SQL from checked data. Raw SQL and shell commands are not accepted from the model. The isolated runner creates the schema, inserts valid records, captures catalog/data snapshots, and verifies every expected rejection by SQLSTATE and the actual constraint or column name. It also confirms the rejection tests left the valid data unchanged.
 4. The diagram uses that same model. The worked normalisation uses captured records, declared candidate keys and links. Partial dependencies on composite candidate keys produce separate 2NF example tables. Otherwise 2NF can remain unchanged. The 3NF argument is stated under the declared dependencies, with individual case review still needed. The sample decomposition must reconstruct the same wide rows and values.
-5. Files are saved under `Surname_Firstname_StudentID` with the required prefix. Steps 3–10 are generated/verified; step 11 is still pending individual review. Click **Run Portfolio 2** to run case-derived queries and its index experiment; successful checks complete steps 12–13. After Portfolio 2, click **Run Portfolio 3** for commit, rollback, isolation and two-session concurrency; passing checks complete steps 14–15. Steps 16–19 remain pending.
+5. Files are saved under `Surname_Firstname_StudentID` with the required prefix. Steps 3–10 are generated/verified; step 11 is still pending individual review. Click **Run Portfolio 2** to run case-derived queries and its index experiment; successful checks complete steps 12–13. After Portfolio 2, click **Run Portfolio 3** for commit, rollback, isolation and two-session concurrency; passing checks complete steps 14–15. Then click **Run Portfolio 4** for MongoDB document modelling, actual inserts and verified queries; passing checks complete steps 16–17. Steps 18–19 remain pending.
 
 Model attempts and failed executions are retained. Authentication, provider, validation and database failures do not become completed assessment stages. There is no fallback to another case study or provider.
 
@@ -46,3 +46,5 @@ The server restores completed case runs and their known file links after restart
 See [Portfolio 2](Portfolio_2.md) for the query experiment, evidence and current limits.
 
 See [Portfolio 3](Portfolio_3.md) for the temporary helper field, actual session output and row-lock comparison.
+
+See [Portfolio 4](Portfolio_4.md) for the MongoDB model, Extended JSON, queries and Atlas/manual replay option.

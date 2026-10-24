@@ -8,7 +8,7 @@
 
 See [the short student guide](STUDENT_START.md). The template author’s account and generated student files are not included. Each student uses their own Codespace and GitHub/Copilot account.
 
-A personalised database portfolio generator for GitHub Codespaces or a local computer. Enter your own case study: the hospital-only restriction has been removed. The current flow generates and validates the case model, explicit rules, sample data and rejection tests, then runs PostgreSQL and builds the ER diagram, normalisation and named Portfolio 1 files. Portfolio 2 then runs case-derived queries and a measured index experiment. Portfolio 3 demonstrates commit, rollback and actual concurrent updates on the saved case. Portfolios 4 and 5 are still pending.
+A personalised database portfolio generator for GitHub Codespaces or a local computer. Enter your own case study: the hospital-only restriction has been removed. The current flow generates and validates the case model, explicit rules, sample data and rejection tests, then runs PostgreSQL and builds the ER diagram, normalisation and named Portfolio 1 files. Portfolio 2 then runs case-derived queries and a measured index experiment. Portfolio 3 demonstrates commit, rollback and actual concurrent updates on the saved case. Portfolio 4 builds and runs MongoDB documents and queries from the same case. Portfolio 5 is still pending.
 
 The existing [19-step codelab](https://github.com/arizonal2014/MIT8103_Codelab) remains unchanged. This project maps that guide into an automated workflow running in each student's own workspace.
 
@@ -18,10 +18,10 @@ See the [scaffold verification notes](Verification.md) for the automated and loc
 
 ## Run locally
 
-Requires Node.js 22+, GitHub CLI signed in to the chosen Copilot account, Docker and a local `postgres:17-alpine` image. Replace `YOUR_GITHUB_LOGIN` below with that account's login.
+Requires Node.js 22+, GitHub CLI signed in to the chosen Copilot account, Docker and the database images prepared by setup (`postgres:17-alpine` and `mongo:7.0`). Replace `YOUR_GITHUB_LOGIN` below with that account's login.
 
 ```bash
-npm ci
+npm run setup:workspace
 npm test
 MIT8103_PILOT_ACCOUNT=YOUR_GITHUB_LOGIN npm start
 ```
@@ -48,4 +48,4 @@ Select a tool and click **Check selected tool locally**. This only looks for its
 
 The [connection notes](Provider_Connections.md) describe Copilot and its saved responses. Enable live generation with `MIT8103_PILOT_ACCOUNT=YOUR_GITHUB_LOGIN npm start`, then follow [the current free-case guide](Free_Case_Workflow.md). The server verifies that signed-in account. Without this setting, generation stays disabled. Gemini and Codex live adapters remain untested.
 
-All 99 automated tests pass locally and in the student Codespace. A freely typed college-library case passed the live browser flow, including four tables, eight seed records and thirteen exact constraint-rejection checks. A separate student-enrolment fixture passed real PostgreSQL tests and produced a composite-key 2NF split. See [verification](Verification.md). The [hospital milestone](Design_Artifacts.md) is historical; current code no longer uses its fixed model or layout. The GitHub template, Codespaces startup and reviewed-output save/push have been browser-tested using a separate account. An equipment-rental case created three tables and passed twenty constraint-rejection checks there. Portfolio 2 is connected; see [the short query guide](Portfolio_2.md). Portfolio 3 is connected; see [the transaction guide](Portfolio_3.md). Portfolios 4 and 5, automatic screenshots and the final summary remain unfinished.
+The current suite passes 109 tests locally; the earlier Portfolio 3 Codespaces milestone passed all 99 tests then available. A freely typed college-library case passed the live browser flow, including four tables, eight seed records and thirteen exact constraint-rejection checks. A separate student-enrolment fixture passed real PostgreSQL tests and produced a composite-key 2NF split. See [verification](Verification.md). The [hospital milestone](Design_Artifacts.md) is historical; current code no longer uses its fixed model or layout. The GitHub template, Codespaces startup and reviewed-output save/push have been browser-tested using a separate account. An equipment-rental case created three tables and passed twenty constraint-rejection checks there. Portfolio 2 is connected; see [the short query guide](Portfolio_2.md). Portfolio 3 is connected; see [the transaction guide](Portfolio_3.md). Portfolio 4 is connected; see [the MongoDB guide](Portfolio_4.md). Portfolio 5, automatic screenshots and the final summary remain unfinished.
