@@ -6,8 +6,8 @@ Enter your details and your own case study. The generator builds a practical por
 
 1. [Create your own private repository from this template](https://github.com/arizonal2014/MIT8103_Portfolio_Generator/generate). Name it `Surname_Firstname_StudentID`.
 2. Choose **Code → Codespaces → Create codespace on main**. Wait for setup, then open the app on **Ports → 4310 → Open in Browser**. Keep the port **Private**.
-3. Enter your name, student ID and case study. Choose **Generate my portfolio**. Your own GitHub account and Copilot allowance are used.
-4. Read the results and draft summary. Add your own reflection, confirm your review and choose **Save reflection and final package**.
+3. Enter your name, student ID and case study. Choose **Continue to build**, then **Generate my portfolio**. Your own GitHub account and Copilot allowance are used.
+4. Read the results and draft summary. Add your own reflection, confirm your review and choose **Save reflection & final package**.
 5. Download the ZIP and three-page PDF. Check your repository, naming and assessment submission instructions before submitting yourself.
 
 The checked **Save real checkpoints** option commits and pushes completed stages to your own private repository, with actual timestamps. If a step fails, its error is shown and earlier results remain. Use **Continue remaining steps** to resume. Do not backdate or invent development history.

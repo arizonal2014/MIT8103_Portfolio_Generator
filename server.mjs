@@ -17,6 +17,10 @@ const routes = new Map([
   ['/style.css', ['public/style.css', 'text/css']],
   ['/app.mjs', ['public/app.mjs', 'text/javascript']],
   ['/shared.mjs', ['shared.mjs', 'text/javascript']],
+  ['/fonts/IBMPlexSans-Regular.woff2', ['public/fonts/IBMPlexSans-Regular.woff2', 'font/woff2']],
+  ['/fonts/IBMPlexSans-Medium.woff2', ['public/fonts/IBMPlexSans-Medium.woff2', 'font/woff2']],
+  ['/fonts/IBMPlexSans-SemiBold.woff2', ['public/fonts/IBMPlexSans-SemiBold.woff2', 'font/woff2']],
+  ['/fonts/IBMPlexMono-Regular.woff2', ['public/fonts/IBMPlexMono-Regular.woff2', 'font/woff2']],
 ]);
 const securityHeaders = {
   'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -52,7 +56,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
       if (req.method === 'GET' && routes.has(url.pathname)) {
         const [file, type] = routes.get(url.pathname);
         const data = await readFile(path.join(root, file));
-        res.writeHead(200, { ...securityHeaders, 'Content-Type': `${type}; charset=utf-8` }); res.end(data); return;
+        res.writeHead(200, { ...securityHeaders, 'Content-Type': type==='font/woff2'?type:`${type}; charset=utf-8` }); res.end(data); return;
       }
       if (req.method !== 'POST' || (!queryRoute&&!transactionRoute&&!mongoRoute&&!guidedRoute)&&!['/api/scaffold','/api/case-spec/check','/api/provider/prepare','/api/pilot/start'].includes(url.pathname)) { json(404, { error: 'Not found.' }); return; }
       // The UI is local/private. Reject cross-origin writes and non-JSON forms.

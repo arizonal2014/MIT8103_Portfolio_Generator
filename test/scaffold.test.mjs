@@ -61,7 +61,11 @@ test('HTTP UI and validation with same-origin writes only', async t => {
   const origin = `http://127.0.0.1:${server.address().port}`;
   const page = await fetch(origin);
   assert.equal(page.status,200);
-  assert.match(await page.text(),/Create workspace scaffold/);
+  assert.match(await page.text(),/aria-label="Portfolio steps"/);
+  const font=await fetch(origin+'/fonts/IBMPlexSans-Regular.woff2');
+  assert.equal(font.headers.get('content-type'),'font/woff2');
+  assert.equal(Buffer.from(await font.arrayBuffer()).subarray(0,4).toString(),'wOF2');
+  assert.equal((await fetch(origin+'/fonts/unknown.woff2')).status,404);
   assert.match(page.headers.get('content-security-policy'),/frame-ancestors 'none'/);
   const post = (data, source=origin) => fetch(origin+'/api/scaffold',{method:'POST',headers:{'Content-Type':'application/json',Origin:source},body:JSON.stringify(data)});
   assert.equal((await post(sample,'https://unrelated.example')).status,403);

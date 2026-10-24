@@ -1,29 +1,88 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MIT 8103 Portfolio Workspace</title><link rel="stylesheet" href="/style.css"></head>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIT 8103 · Portfolio generator</title>
+  <link rel="preload" href="/fonts/IBMPlexSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/style.css">
+</head>
 <body>
-<header><a href="/">MIT 8103 <strong>Portfolio workspace</strong></a><span class="tag">Your case study · Your workspace</span></header>
-<main>
-  <section class="intro"><p class="eyebrow">YOUR CASE STUDY. ONE ORGANISED WORKSPACE.</p><h1>Start with your details.</h1><p>Enter your details and any case study. The generator builds all five portfolios, runs the database exercises, saves screenshots and prepares a three-page summary. Review the results, add your reflection and download your files.</p></section>
-  <div class="columns">
-    <section class="panel"><h2>Project details</h2><p class="small">Use your own details for your workspace. For testing, use a dummy student ID.</p>
-      <form id="details" novalidate>
-        <div class="name-row"><label>First name<input name="firstName" autocomplete="given-name" maxlength="80" required><span class="error" id="firstName-error"></span></label><label>Surname<input name="surname" autocomplete="family-name" maxlength="80" required><span class="error" id="surname-error"></span></label></div>
-        <label>Student ID<input name="studentId" type="text" maxlength="40" required aria-describedby="id-help studentId-error"><span class="small" id="id-help">Leading zeroes are kept.</span><span class="error" id="studentId-error"></span></label>
-        <label>Case study<textarea name="caseStudy" rows="4" maxlength="3000" placeholder="Describe your system and its main operations. For example: a library where members borrow and return physical book copies." required></textarea><span class="error" id="caseStudy-error"></span></label>
-        <label>AI tool<select name="provider" required><option value="copilot" selected>Copilot</option><option value="gemini" disabled>Gemini — not connected yet</option><option value="codex" disabled>Codex — not connected yet</option></select><span class="small">Choose Copilot for live generation. Gemini and Codex have preparation only for now.</span><span class="error" id="provider-error"></span></label>
-        <div class="example-buttons"><button type="button" id="check-provider">Check selected tool locally</button><button type="button" id="prepare-request">Preview unsent AI request</button></div><p class="small" id="provider-status" role="status" aria-live="polite">Choose a tool. Installation is not proof of account access.</p><details id="request-preview" hidden><summary>Unsent request preview</summary><textarea id="request-text" rows="5" readonly aria-label="Unsent AI request"></textarea></details>
-        <div class="preview"><span class="small">Folder and filename prefix</span><code id="prefix">Surname_Firstname_StudentID</code></div>
-        <p id="form-status" role="status" aria-live="polite"></p>
-        <details><summary>Optional: create empty folders only</summary><button type="submit" id="create">Create workspace scaffold</button></details>
-        <p class="small">Start the full run below. You can close this tab and reconnect to the saved run.</p>
-        <div class="pilot-controls"><h3>Generate your case study</h3><p class="small">The run uses your selected case, Copilot, temporary PostgreSQL and MongoDB. It checks the generated rules and records before continuing. Up to four AI requests, including corrections. Names and student IDs stay out of AI prompts.</p><button type="button" id="use-hospital">Use a library example (optional)</button><p class="small" id="pilot-config">Checking generation availability…</p><label class="small"><input type="checkbox" id="save-github"> Save real checkpoints to my private GitHub repository</label><p class="small" id="repository-status"></p><button type="button" id="run-pilot" disabled>Generate my portfolio</button></div>
-      </form>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><a class="wordmark" href="/">MIT 8103 <span>Portfolio generator</span></a><a class="text-link" href="https://github.com/arizonal2014/MIT8103_Codelab" target="_blank" rel="noopener">Open the codelab <span aria-hidden="true">↗</span></a></header>
+<main id="main">
+  <div class="page-heading"><h1>Your database portfolio.</h1><p>Start with your case study. Build it, review it, then download.</p></div>
+  <nav aria-label="Portfolio steps"><ol class="journey">
+    <li><button type="button" id="step-1" aria-current="step" data-go-step="1"><span class="step-number">1</span><span>Your details</span></button></li>
+    <li><button type="button" id="step-2" data-go-step="2" disabled><span class="step-number">2</span><span>Build</span></button></li>
+    <li><button type="button" id="step-3" data-go-step="3" disabled><span class="step-number">3</span><span>Review &amp; download</span></button></li>
+  </ol></nav>
+  <form id="details" novalidate>
+    <section id="step-details" class="step-section" data-step="1" aria-labelledby="details-title">
+      <div class="section-heading"><h2 id="details-title" tabindex="-1">Your details</h2><p>Use the name and student ID required for your submission.</p></div>
+      <div class="name-row">
+        <label for="first-name">First name<input id="first-name" name="firstName" autocomplete="given-name" maxlength="80" required aria-describedby="firstName-error"><span class="error" id="firstName-error"></span></label>
+        <label for="surname">Surname<input id="surname" name="surname" autocomplete="family-name" maxlength="80" required aria-describedby="surname-error"><span class="error" id="surname-error"></span></label>
+      </div>
+      <label for="student-id">Student ID<input id="student-id" name="studentId" type="text" maxlength="40" required aria-describedby="id-help studentId-error"><span class="hint" id="id-help">Keep any leading zeroes.</span><span class="error" id="studentId-error"></span></label>
+      <label for="case-study">Your case study<textarea id="case-study" name="caseStudy" rows="4" maxlength="3000" placeholder="For example: a library where members borrow and return physical book copies." required aria-describedby="case-help caseStudy-error"></textarea><span class="hint" id="case-help">Name the system and briefly describe what it needs to do.</span><span class="error" id="caseStudy-error"></span></label>
+      <button type="button" class="text-button" id="use-hospital">Use the library example</button>
+      <div class="filename-preview"><span>Folder name</span><code id="prefix">Surname_Firstname_StudentID</code></div>
+      <p id="form-status" role="status" aria-live="polite"></p>
+      <div class="actions"><button type="button" id="next-step">Continue to build <span aria-hidden="true">→</span></button><button type="button" id="return-to-run" class="text-button" hidden>Return to saved portfolio</button></div>
     </section>
-    <section class="panel" aria-labelledby="progress-title"><div class="section-head"><h2 id="progress-title">Your 19-step plan</h2><span id="count" class="tag">0 / 19 executed</span></div><p class="small">Screenshots and logs are planned now and captured only after real execution.</p><ol id="stages" class="stages"></ol></section>
-  </div>
-  <section class="panel result" id="pilot-result" hidden><h2>Your case study progress</h2><p id="pilot-message" role="status" aria-live="polite"></p><ol id="pilot-steps"></ol><p class="small" id="pilot-output"></p><ul id="pilot-files"></ul><details><summary>SQL, logs and other files</summary><ul id="other-files"></ul></details><div id="query-controls" hidden><h3>Portfolio 2: Queries and optimisation</h3><p>Run SQL against your saved case, then compare a lookup before and after indexing. This uses temporary PostgreSQL and no additional AI requests.</p><button type="button" id="run-queries">Run Portfolio 2</button><p id="query-message" role="status" aria-live="polite"></p></div><div id="transaction-controls" hidden><h3>Portfolio 3: Transactions and concurrency</h3><p>See commit, rollback and two sessions updating the same case record. A temporary helper counter makes the changes visible. No extra AI request is needed.</p><button type="button" id="run-transactions">Run Portfolio 3</button><p id="transaction-message" role="status" aria-live="polite"></p></div><div id="mongo-controls" hidden><h3>Portfolio 4: MongoDB documents and queries</h3><p>Build sample documents from your saved case and run MongoDB inserts, filters, aggregation and validation checks. No extra AI request is needed.</p><button type="button" id="run-mongo">Run Portfolio 4</button><p id="mongo-message" role="status" aria-live="polite"></p></div><div id="finish-controls" hidden><h3>Finish your portfolio</h3><p id="guided-message" role="status" aria-live="polite"></p><button type="button" id="continue-run">Continue remaining steps</button><form id="review-form" hidden><label>Your reflection<textarea name="reflection" id="reflection-text" rows="5" minlength="80" maxlength="1800" placeholder="What did you learn? What was difficult? How did you check the results? Use your own experience." required></textarea></label><label class="small"><input type="checkbox" name="reviewed" required> I reviewed the scripts, results, diagram and summary and can explain them.</label><button type="submit" id="finish-review">Save reflection and final package</button></form></div><p class="small">Portfolio 5 uses the permitted discussion option. Review the summary and submit the assessment yourself.</p></section>
-  <details class="panel contract"><summary>Developer check: shared case specification</summary><p class="small">This checks the structure of a proposed model, not a running database. The examples are hand-written test fixtures, not AI-generated results. Students will not need to write this JSON once provider adapters are connected.</p><div class="example-buttons"><button type="button" id="library-example">Load library test model</button><button type="button" id="hospital-example">Load hospital test model</button></div><label>Case specification JSON<textarea id="case-json" rows="8" spellcheck="false" placeholder="Load a test model or paste a proposed specification."></textarea></label><button type="button" id="validate-case">Check design structure</button><p id="case-status" role="status" aria-live="polite"></p><ul id="case-errors"></ul><p class="small" id="case-detail"></p></details>
-  <section class="panel result" id="result" hidden><p class="eyebrow">SCAFFOLD CREATED</p><h2>Your folders are ready. Execution is still pending.</h2><p id="saved-path"></p><h3>Files created</h3><ul id="files"></ul><h3>Screenshot plan</h3><p>These images do not exist yet. Each planned image has a matching log filename.</p><ul id="evidence"></ul><p class="small">This is not a completed portfolio or submission. AI connections, database exercises, screenshot capture and final document generation are later milestones.</p></section>
-</main><footer>MIT 8103 · Portfolio generator · Synthetic data only</footer><script type="module" src="/app.mjs"></script>
+    <section id="step-build" class="step-section" data-step="2" aria-labelledby="build-title" hidden>
+      <div class="section-heading"><h2 id="build-title" tabindex="-1">Build your portfolio</h2><p>Five portfolios, execution evidence and a three-page summary.</p></div>
+      <dl class="case-recap"><div><dt>Name &amp; student ID</dt><dd id="build-identity">—</dd></div><div><dt>Case study</dt><dd id="build-case">—</dd></div></dl>
+      <p id="pilot-config" class="connection-status" role="status">Checking your workspace…</p>
+      <label class="check-row"><input type="checkbox" id="save-github"><span>Save completed stages to my private GitHub repository.</span></label>
+      <p class="hint" id="repository-status"></p>
+      <details class="disclosure" id="build-settings"><summary>Build settings</summary><div class="disclosure-body">
+        <label for="ai-tool">AI tool<select id="ai-tool" name="provider" required><option value="copilot" selected>Copilot</option><option value="gemini" disabled>Gemini — not connected</option><option value="codex" disabled>Codex — not connected</option></select><span class="error" id="provider-error"></span></label>
+        <p class="hint">Uses your Copilot allowance, with up to four requests including corrections. Your name and student ID stay out of the prompts.</p>
+        <div class="inline-actions"><button type="button" class="secondary" id="check-provider">Check tool</button><button type="button" class="secondary" id="prepare-request">Preview AI request</button></div><p id="provider-status" class="hint" role="status" aria-live="polite"></p>
+        <details id="request-preview" hidden><summary>Request preview</summary><textarea id="request-text" rows="5" readonly aria-label="Unsent AI request"></textarea></details>
+      </div></details>
+      <div class="actions" id="build-actions"><button type="button" id="run-pilot" disabled>Generate my portfolio</button><button type="button" class="text-button" data-go-step="1" id="edit-details">Edit details</button></div>
+    </section>
+  </form>
+  <section id="build-progress" class="step-section" data-step="2" aria-labelledby="progress-title" hidden>
+    <div class="run-status" role="status" aria-live="polite" aria-atomic="true"><span class="spinner" id="build-spinner" aria-hidden="true" hidden></span><div><h2 id="progress-title">Portfolio progress</h2><p id="build-message">Ready when you are.</p></div></div>
+    <div class="progress-caption"><span id="run-name"></span><span id="count">0 / 19 steps complete</span></div>
+    <progress id="build-meter" value="0" max="19" aria-label="Completed portfolio steps"></progress>
+    <ol id="portfolio-progress" class="portfolio-progress"></ol>
+    <details class="disclosure"><summary>See all 19 steps</summary><ol id="stages" class="stages"></ol><ul id="pilot-steps" class="process-list"></ul></details>
+    <p id="build-error" class="error" role="alert" hidden></p>
+    <div class="actions"><button type="button" id="build-continue" hidden>Continue remaining steps</button><button type="button" id="open-review" class="secondary" hidden>Review results <span aria-hidden="true">→</span></button></div>
+  </section>
+  <section class="step-section" id="pilot-result" data-step="3" hidden>
+    <div class="section-heading"><h2 id="review-title" tabindex="-1">Review &amp; download</h2><p id="result-case"></p></div>
+    <p id="pilot-message" class="result-status" role="status" aria-live="polite"></p>
+    <div id="summary-actions" class="download-links" hidden><a id="summary-link" class="button secondary" target="_blank" rel="noopener">Read the draft summary <span aria-hidden="true">↗</span></a><a id="zip-link" class="button" download>Download portfolio ZIP <span aria-hidden="true">↓</span></a></div>
+    <p id="download-note" class="hint" hidden>Draft package. Add your reflection and confirm your review below.</p>
+    <details class="disclosure"><summary>Portfolio reports</summary><div id="pilot-files" class="report-list"></div></details>
+    <details class="disclosure"><summary>Scripts, screenshots &amp; logs</summary><ul id="other-files" class="file-list"></ul><p id="pilot-output" class="hint"></p></details>
+    <div id="query-controls" hidden><h3>Portfolio 2</h3><button type="button" id="run-queries">Run Portfolio 2</button><p id="query-message" role="status"></p></div>
+    <div id="transaction-controls" hidden><h3>Portfolio 3</h3><button type="button" id="run-transactions">Run Portfolio 3</button><p id="transaction-message" role="status"></p></div>
+    <div id="mongo-controls" hidden><h3>Portfolio 4</h3><button type="button" id="run-mongo">Run Portfolio 4</button><p id="mongo-message" role="status"></p></div>
+    <div id="finish-controls" hidden>
+      <p id="guided-message" class="hint" role="status" aria-live="polite"></p><button type="button" id="continue-run">Continue remaining steps</button>
+      <form id="review-form" hidden>
+        <label for="reflection-text">Your reflection<textarea name="reflection" id="reflection-text" rows="5" minlength="80" maxlength="1800" placeholder="What did you learn, what was difficult, and how did you check the results?" required aria-describedby="reflection-help"></textarea><span id="reflection-help" class="hint">Use your own experience. Between 80 and 1,800 characters.</span></label>
+        <label class="check-row"><input type="checkbox" name="reviewed" required><span>I reviewed the scripts, results, diagram and summary and can explain them.</span></label>
+        <div class="actions"><button type="submit" id="finish-review"><span class="spinner" id="review-spinner" aria-hidden="true" hidden></span>Save reflection &amp; final package</button></div>
+      </form>
+    </div>
+    <p class="hint end-note">Portfolio 5 uses the assessment’s discussion option. Submit the assessment yourself after your final checks.</p>
+    <button type="button" id="new-portfolio" class="text-button">Start another portfolio</button>
+  </section>
+  <details id="workspace-tools" class="disclosure workspace-tools"><summary>Workspace tools</summary><div class="disclosure-body">
+    <p class="hint">Optional tools for checking a model or creating empty folders.</p>
+    <button type="button" id="create" class="secondary">Create folders only</button>
+    <p id="tools-status" class="hint" role="status"></p>
+    <details class="disclosure"><summary>Check a case model</summary><p class="hint">Checks the design structure. The examples are test models, not executed portfolios.</p><div class="inline-actions"><button type="button" class="secondary" id="library-example">Library model</button><button type="button" class="secondary" id="hospital-example">Hospital model</button></div><label>Case specification JSON<textarea id="case-json" rows="8" spellcheck="false"></textarea></label><button type="button" class="secondary" id="validate-case">Check structure</button><p id="case-status" class="hint" role="status"></p><ul id="case-errors" class="error"></ul><p id="case-detail" class="hint"></p></details>
+    <section id="result" hidden><h3>Folders created</h3><p id="saved-path" class="hint"></p><details><summary>Files</summary><ul id="files" class="file-list"></ul></details><details><summary>Planned evidence</summary><ul id="evidence" class="file-list"></ul></details><p class="hint">Folders only. Database exercises have not run.</p></section>
+  </div></details>
+</main>
+<footer class="site-footer"><span>MIT 8103 · Advanced Database Systems</span><span>By Perete Harrison</span></footer>
+<script type="module" src="/app.mjs"></script>
 </body></html>

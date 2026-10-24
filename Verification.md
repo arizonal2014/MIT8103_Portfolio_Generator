@@ -226,3 +226,9 @@ The private `harrson2026/Cole_Jamie_000456` Codespace installed the renderer thr
 A fresh, freely entered **College Course Enrolment** case (`ae233e2c-64c6-4df6-b150-2e5d1039cab5`, fictional `Morgan_Alex_000789`) ran the entire guided pipeline locally through the browser: four tables, 13 expected constraint rejections, all three later database portfolios, Portfolio 5, seven screenshots and final review/export. One case-model correction was needed; the corrected model and execution package validated. A new browser tab reconnected after a server restart without another AI request. Local template-repository verification correctly remains pending; the private Codespace supplies the separate GitHub-save verification.
 
 ![Private Codespace showing 19 completed steps](verification/Cole_Jamie_000456_GeneratorComplete.jpg)
+
+## Minimal interface redesign — 24 October 2026
+
+Replaced the two-column prototype with three disclosed steps: Your details, Build, Review & download. The app uses unmodified, locally hosted IBM Plex Sans and Mono fonts from IBM's official repository, with the SIL Open Font License retained. Settings, the 19-step breakdown, portfolio reports and technical files remain collapsed until opened.
+
+Browser checks covered required-field errors, a garden-case preview with a leading-zero student ID, navigation back to the saved course-enrolment results, grouped ER/normalisation links and a real PDF/ZIP rebuild. The review spinner was visibly active during that export. No new AI request or database exercise was needed for these interface checks. No browser console errors were observed. Widths 375, 768 and 1280px had no horizontal overflow; body and input text were 17px and IBM Plex Sans was loaded. Reduced-motion CSS disables animation while retaining status text. All 119 existing tests passed; the HTTP integration check now also verifies font MIME/signature and rejects unknown font paths.
