@@ -4,7 +4,7 @@ The assessment assigns 7 marks to a NoSQL model for the same case study, impleme
 
 1. Choose **Generate my portfolio**. The guided run executes Portfolio 4 after its prerequisites.
 2. Open the Portfolio 4 report links and inspect the saved scripts and results.
-3. Leave **Save real checkpoints** checked to push completed stages to your own private repository. Use `npm run save` if saving manually.
+3. Completed stages are saved automatically to your separate private portfolio repository. Open the commit link in the pipeline to inspect the saved work.
 
 A new Codespace prepares MongoDB automatically. For an existing workspace, run `npm run setup:workspace` once if the app says the MongoDB image is missing, then retry. The lab uses MongoDB 7.0 inside Docker; no additional AI request is needed.
 

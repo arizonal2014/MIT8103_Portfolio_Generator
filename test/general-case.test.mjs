@@ -80,3 +80,12 @@ test('free-text workflow accepts a library case and saves model-specific outputs
   assert.ok(restored.artifact(job.id,'er-diagram').path.endsWith('_P1_ERDiagram.html'));
   assert.equal(restored.artifact(job.id,'../../secrets'),undefined);
 });
+
+test('initial retry keeps failed evidence and reruns the same job explicitly',async()=>{
+ const root=await mkdtemp(path.join(tmpdir(),'mit8103-retry-'));let calls=0;
+ const flow=createCaseWorkflow({runsDirectory:root,account:'fixture',generateSpec:async()=>{calls++;return {status:'provider_failed'};}});
+ const raw={firstName:'Robin',surname:'Hart',studentId:'000987',caseStudy:'A garden plot allocation system.',provider:'copilot',requestId:randomUUID(),allowLive:true};
+ const job=await flow.start(raw);await flow.settled(job.id);assert.equal(flow.get(job.id).status,'failed');
+ await flow.retryInitial(job.id,raw);await flow.settled(job.id);assert.equal(calls,2);assert.equal(flow.get(job.id).status,'failed');
+ const attempts=await (await import('node:fs/promises')).readdir(path.join(root,'.attempts'));assert.equal(attempts.length,1);assert.ok((await readFile(path.join(root,'.attempts',attempts[0],'Workflow.json'),'utf8')).includes('failed'));
+});

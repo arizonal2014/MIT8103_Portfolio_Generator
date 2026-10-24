@@ -1,3 +1,5 @@
+> Earlier implementation notes. For the current three-step flow, follow [Start your portfolio](STUDENT_START.md).
+
 # Browser hospital workflow
 
 Historical milestone. The active app now uses the [free-case workflow](Free_Case_Workflow.md); the hospital-only gate described below has been removed.

@@ -4,9 +4,9 @@ The assessment assigns 7 marks to SQL queries and results, execution plans, opti
 
 1. Choose **Generate my portfolio**. The guided run executes Portfolio 2 after its prerequisites.
 2. Open the Portfolio 2 report links and inspect the saved scripts and results.
-3. Leave **Save real checkpoints** checked to push completed stages to your own private repository. Use `npm run save` if saving manually.
+3. Completed stages are saved automatically to your separate private portfolio repository. Open the commit link in the pipeline to inspect the saved work.
 
-Files are placed in `Surname_Firstname_StudentID/portfolio-2-query-optimisation/` with your name/ID prefix.
+Files are placed in `portfolio-2-query-optimisation/` with your name/ID prefix.
 
 The first page shows a join, a filter and a grouped count using the actual Portfolio 1 tables and sample rows. Each query has its actual `EXPLAIN ANALYZE` plan. Generated queries follow the saved entity links; review whether their choices answer useful questions for your case.
 

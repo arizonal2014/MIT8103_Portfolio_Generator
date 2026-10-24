@@ -1,13 +1,15 @@
 # Start your portfolio
 
-1. [Create a private copy](https://github.com/arizonal2014/MIT8103_Portfolio_Generator/generate) named `Surname_Firstname_StudentID`.
-2. Open **Code → Codespaces → Create codespace on main**. Setup installs the app, databases and report renderer. Open **Ports → 4310 → Open in Browser** if the app does not open automatically.
-3. Enter your name, ID and case study. Choose **Continue to build**, then **Generate my portfolio**. Leave **Save real checkpoints** checked to save completed stages to your own repository.
-4. Read the reports and draft PDF. Add your own reflection, check the review box and click **Save reflection & final package**.
-5. Download the ZIP and PDF. Confirm the repository contains your work and your lecturer can access it, then submit using the assessment form yourself.
+[Open in Codespaces](https://codespaces.new/arizonal2014/MIT8103_Portfolio_Generator). Wait for setup and open **Ports → 4310 → Open in Browser**. Keep the port **Private**.
 
-Your Codespace is connected to your repository. Copilot uses your own account and allowance. No author's account or token is included. Keep port 4310 **Private**.
+Connect GitHub once when prompted. The app opens GitHub's device sign-in page so you can approve creation of your private assessment repository. Copilot uses your own account and allowance.
 
-If a stage fails, read the error and use **Continue remaining steps** after fixing it. A failed initial case design needs a corrected new run. Reloading the page reconnects to your saved run; it does not start another AI request.
+1. **Details:** enter first name, surname, student ID and case study. Choose **Create portfolio**.
+2. **Build:** watch each stage complete. Expand a row for its log and commit link. Use **Retry remaining stages** if needed.
+3. **Repository:** choose **Open my portfolio**. The five folders, evidence and final summary are already saved in your private `Surname_Firstname_StudentID` repository.
 
-To start a stopped app, run `npm run workspace`. To save manually, run `npm run save`. Commits use real timestamps and completed results. Stop the Codespace when you finish.
+Edit the final summary on GitHub, including your individual reflection. Review the scripts and results. Update the PDF after your edits, confirm assessor access and follow the assessment submission instructions.
+
+Reloading reconnects to your saved run. It does not start a duplicate AI request. A retry preserves completed stages and commits. Existing work with the same repository name is left untouched.
+
+To restart the app, run `npm run workspace`. Stop the Codespace when finished.

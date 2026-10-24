@@ -1,45 +1,47 @@
 # MIT 8103 Portfolio Generator
 
-Enter your details and your own case study. The generator builds a practical portfolio, runs its database exercises and organises the results.
+A practical database portfolio from your name, student ID and case study.
 
-## Start
+[Open the generator in Codespaces](https://codespaces.new/arizonal2014/MIT8103_Portfolio_Generator)
 
-1. [Create your own private repository from this template](https://github.com/arizonal2014/MIT8103_Portfolio_Generator/generate). Name it `Surname_Firstname_StudentID`.
-2. Choose **Code → Codespaces → Create codespace on main**. Wait for setup, then open the app on **Ports → 4310 → Open in Browser**. Keep the port **Private**.
-3. Enter your name, student ID and case study. Choose **Continue to build**, then **Generate my portfolio**. Your own GitHub account and Copilot allowance are used.
-4. Read the results and draft summary. Add your own reflection, confirm your review and choose **Save reflection & final package**.
-5. Download the ZIP and three-page PDF. Check your repository, naming and assessment submission instructions before submitting yourself.
+Wait for setup, then open **Ports → 4310 → Open in Browser**. Keep the port **Private**. Connect your own GitHub account when prompted; repository creation needs access beyond the Codespace's default token.
 
-The checked **Save real checkpoints** option commits and pushes completed stages to your own private repository, with actual timestamps. If a step fails, its error is shown and earlier results remain. Use **Continue remaining steps** to resume. Do not backdate or invent development history.
+## Three steps
 
-## What it produces
+1. **Details:** enter your first name, surname, student ID and case study. Select **Create portfolio**.
+2. **Build:** follow the pipeline. Expand a stage to read its log or open its commit. Failed stages show **Retry remaining stages**.
+3. **Repository:** select **Open my portfolio**. Your private repository is named `Surname_Firstname_StudentID`, with the five portfolio folders at its root. Edit the final summary there.
 
-| Assessment component | Output |
+Completed stages are committed and pushed automatically with their actual timestamps. The repository contains the assessment files; the generator code stays in its workspace. Existing unrelated repositories and edits made on GitHub are not overwritten.
+
+## Output
+
+| Component | Files and evidence |
 | --- | --- |
-| Portfolio 1 · 7 marks | Case description, keys, constraints, executed schema, ER diagram, worked 1NF–3NF tables and tests |
-| Portfolio 2 · 7 marks | Three SQL queries, results, six measured plans and an index comparison |
-| Portfolio 3 · 7 marks | Commit, rollback and two actual sessions demonstrating a lost update and row locking |
-| Portfolio 4 · 7 marks | MongoDB documents, inserts, filters, aggregation and validation checks |
-| Portfolio 5 · 6 marks | Case-specific proposed distributed architecture and discussion, using the brief's discussion option |
-| Final documentation · 6 marks | Three-page PDF with ER diagram, actual results, repository link, reflection, references and AI declaration |
+| Portfolio 1 · 7 marks | Case study, relational schema, keys, constraints, ER diagram, worked 1NF–3NF tables and database tests |
+| Portfolio 2 · 7 marks | SQL queries, actual results, execution plans and measured index comparison |
+| Portfolio 3 · 7 marks | Commit, rollback, isolation and two-session concurrency evidence |
+| Portfolio 4 · 7 marks | MongoDB model, inserts, queries, aggregation and validation checks |
+| Portfolio 5 · 6 marks | Proposed architecture and distributed database discussion |
+| Final documentation · 6 marks | Editable summary, three-page PDF, references, AI declaration and space for individual reflection |
 
-Seven screenshots are rendered automatically from saved report pages. Their source and image hashes are recorded. Portfolio 5 shows a **proposal**, not a live replication experiment. SQL, JavaScript, raw output and a short explanation accompany the images.
+Documents and diagrams use black text on white. Seven screenshots render saved execution reports, backed by logs and result files. Portfolio 5 uses the assessment's discussion option; it does not claim a live distributed deployment.
 
-Case studies are freely entered, rather than selected from a hospital-only template. Generated designs must satisfy the supported relational model and executable rule checks; unsupported or failing designs stop visibly. Structural checks do not replace your review of domain decisions or normalisation assumptions.
+Generation finishes without a reflection form. Complete your individual reflection and review the work in the editable summary. The generated PDF is a snapshot: update your submission PDF after editing. Submit through the university's assessment form yourself.
 
-**Connected AI option:** Copilot. Gemini and Codex are future adapters; they are not live options yet. Generation can use up to four AI requests, including corrections. The separately entered name and student ID are omitted from the prompts. Quotas, Codespaces compute and storage depend on your account.
+**AI provider:** Copilot, using your account and allowance. Names and student IDs are kept out of model prompts. Case studies are freely entered; designs must pass the supported schema, rule and execution checks. Unsupported or failing designs stop visibly. Gemini and Codex are not connected yet.
 
 ## Run locally
 
-Use Node.js 22+, Docker and GitHub CLI. Sign in to your own GitHub account with Copilot access, then run:
+Install Node.js 22+, Docker and GitHub CLI, then run:
 
 ```bash
 npm run setup:workspace
 npm run workspace
 ```
 
-Open `http://127.0.0.1:4310`. Local generation also works; saving checkpoints requires your own private repository. `npm run save` exports and pushes the latest completed work if you prefer to save manually. No assessment form is submitted by this app.
+Open `http://127.0.0.1:4310/`. Connect your own GitHub account with Copilot access. The same three-step process creates the separate private assessment repository.
 
-The app uses temporary PostgreSQL and MongoDB containers. No Atlas or cloud database account is required. Stop your Codespace when finished. Your output remains in your repository after successful saves.
+The app uses temporary PostgreSQL and MongoDB containers. No Atlas account is required. Codespaces compute, storage and Copilot usage depend on your account. Stop the Codespace when finished.
 
-[Student guide](STUDENT_START.md) · [Manual 19-step codelab](https://github.com/arizonal2014/MIT8103_Codelab) · [Verification record](Verification.md)
+[Student guide](STUDENT_START.md) · [Manual codelab](https://github.com/arizonal2014/MIT8103_Codelab) · [Verification record](Verification.md)

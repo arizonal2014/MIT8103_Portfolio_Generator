@@ -1,4 +1,5 @@
 import http from 'node:http';
+import {createGithubLogin} from './lib/github-login.mjs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,6 +30,7 @@ const securityHeaders = {
 };
 
 export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAccount=process.env.MIT8103_PILOT_ACCOUNT, access=workspaceAccess() } = {}) {
+  const githubLogin=createGithubLogin(root);
   const workflow=createGuidedWorkflow(createCaseWorkflow({runsDirectory,account:pilotAccount}),{runsDirectory,root});
   return http.createServer(async (req, res) => {
     const json = (status, body) => { res.writeHead(status, { ...securityHeaders, 'Content-Type': 'application/json' }); res.end(JSON.stringify(body)); };
@@ -37,7 +39,8 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
       if(!access.hostAllowed(req.headers.host)){json(403,{error:'Use this workspace\u2019s generator URL.'});return;}
       if(req.method==='GET'&&url.pathname==='/api/health'){json(200,{service:'mit8103-generator',workspace:root+path.sep,pid:process.pid});return;}
       await workflow.ready;
-      if(req.method==='GET'&&url.pathname==='/api/pilot/config'){json(200,{enabled:workflow.enabled,account:workflow.account,repository:await workflow.context,latestJob:workflow.latestId(),scenario:'A library borrowing system for members, books, physical copies and loans. Keep borrowing and return history and allow only one open loan per copy.'});return;}
+      if(req.method==='GET'&&url.pathname==='/api/github/login'){json(200,githubLogin.status());return;}
+      if(req.method==='GET'&&url.pathname==='/api/pilot/config'){const repository=await workflow.context;if(pilotAccount!==null&&repository.verified&&workflow.account!==repository.login)workflow.setAccount(repository.login);json(200,{enabled:workflow.enabled,account:workflow.account,repository,latestJob:workflow.latestId(),scenario:'A library borrowing system for members, books, physical copies and loans. Keep borrowing and return history and allow only one open loan per copy.'});return;}
       const guidedRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})\/(continue|review)$/);
       const mongoRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})\/mongodb$/);
       const transactionRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})\/transactions$/);
@@ -47,7 +50,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
         if(!jobRoute[2]){const job=workflow.get(jobRoute[1]);json(job?200:404,job||{error:'Run not found in this server session. Saved files remain on disk.'});return;}
         const artifact=await workflow.artifact(jobRoute[1],jobRoute[2]);if(!artifact){json(404,{error:'File not available.'});return;}
         const html=artifact.path.endsWith('.html'),svg=artifact.path.endsWith('.svg'),pdf=artifact.path.endsWith('.pdf'),zip=artifact.path.endsWith('.zip'),png=artifact.path.endsWith('.png');const data=await readFile(artifact.path);
-        res.writeHead(200,{...securityHeaders,...(html||svg?{'Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'"}:{}),'Content-Disposition':`${zip?'attachment':'inline'}; filename*=UTF-8''${encodeURIComponent(path.basename(artifact.path))}`,'Content-Type':html?'text/html; charset=utf-8':svg?'image/svg+xml; charset=utf-8':pdf?'application/pdf':zip?'application/zip':png?'image/png':'text/plain; charset=utf-8'});res.end(data);return;
+        res.writeHead(200,{...securityHeaders,...(html||svg?{'Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; font-src data:; base-uri 'none'; frame-ancestors 'none'"}:{}),'Content-Disposition':`${zip?'attachment':'inline'}; filename*=UTF-8''${encodeURIComponent(path.basename(artifact.path))}`,'Content-Type':html?'text/html; charset=utf-8':svg?'image/svg+xml; charset=utf-8':pdf?'application/pdf':zip?'application/zip':png?'image/png':'text/plain; charset=utf-8'});res.end(data);return;
       }
       if(req.method==='GET'&&url.pathname==='/api/case-spec/schema'){json(200,caseSpecSchema);return;}
       if(req.method==='GET'&&url.pathname==='/api/providers'){json(200,await inspectProviders());return;}
@@ -58,7 +61,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
         const data = await readFile(path.join(root, file));
         res.writeHead(200, { ...securityHeaders, 'Content-Type': type==='font/woff2'?type:`${type}; charset=utf-8` }); res.end(data); return;
       }
-      if (req.method !== 'POST' || (!queryRoute&&!transactionRoute&&!mongoRoute&&!guidedRoute)&&!['/api/scaffold','/api/case-spec/check','/api/provider/prepare','/api/pilot/start'].includes(url.pathname)) { json(404, { error: 'Not found.' }); return; }
+      if (req.method !== 'POST' || (!queryRoute&&!transactionRoute&&!mongoRoute&&!guidedRoute)&&!['/api/scaffold','/api/case-spec/check','/api/provider/prepare','/api/pilot/start','/api/github/login'].includes(url.pathname)) { json(404, { error: 'Not found.' }); return; }
       // The UI is local/private. Reject cross-origin writes and non-JSON forms.
       const origin = req.headers.origin;
       if (!access.originAllowed(origin,req.headers.host) || req.headers['content-type']?.split(';')[0] !== 'application/json') {
@@ -72,6 +75,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
       const body=Buffer.concat(chunks).toString('utf8');
       let input;
       try { input = JSON.parse(body); } catch { json(400, { error: 'The form could not be read. Try again.' }); return; }
+      if(url.pathname==='/api/github/login'){json(202,githubLogin.start());return;}
       if(guidedRoute){json(202,await workflow[guidedRoute[2]==='review'?'review':'continueRun'](guidedRoute[1],input));return;}
       if(mongoRoute){json(202,await workflow.startMongo(mongoRoute[1],input));return;}
       if(transactionRoute){json(202,await workflow.startTransactions(transactionRoute[1],input));return;}

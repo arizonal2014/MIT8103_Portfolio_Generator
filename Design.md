@@ -1,17 +1,7 @@
-# Interface design
+# Interface
 
-A quiet, practical workspace: warm off-white, charcoal text, one forest-green accent and fine dividers. No decorative cards, gradients or promotional hero. Keep copy short and the current action clear.
+Three steps: Details → Build → Repository.
 
-## Three steps
+The form asks for first name, surname, student ID and case study. GitHub sign-in is a one-time setup. The seven-stage pipeline has expandable logs, elapsed times, a spinner, commit links and an explicit retry. The result leads to the separate student repository; downloads are secondary.
 
-1. **Your details:** name, student ID, case study and filename preview. Validate before continuing.
-2. **Build:** confirm the case, connection and GitHub saves. Show five activity states, a small spinner and real progress. Keep settings and the 19-step breakdown collapsed.
-3. **Review & download:** summary and ZIP first, then the student's reflection. Group reports by portfolio; keep scripts, screenshots and logs collapsed.
-
-## Typography and access
-
-Use locally hosted IBM Plex Sans (400, 500, 600) and IBM Plex Mono (400), from IBM's official repository. Font source and SIL Open Font License are in public/fonts/. No remote font service is used.
-
-Body and inputs: 17px. Labels and buttons: 16px. Supporting text: 14px. Desktop title: 38px; mobile: 30px. Provide visible keyboard focus, semantic headings, current-step navigation, labelled inputs, live status text and 44px minimum actions. Reduced-motion settings stop the spinner animation and transitions while retaining status text.
-
-The interface presents the existing generator. UI changes must not start AI/database work during navigation, invent progress, clear saved runs or alter assessment results.
+Use self-hosted IBM Plex Sans and IBM Plex Mono, black text, white backgrounds and grey rules. Keep 17px body text, visible keyboard focus and reduced-motion support. Do not add a compulsory reflection form. The editable final summary includes the required individual-reflection section.

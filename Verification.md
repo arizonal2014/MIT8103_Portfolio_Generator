@@ -232,3 +232,28 @@ A fresh, freely entered **College Course Enrolment** case (`ae233e2c-64c6-4df6-b
 Replaced the two-column prototype with three disclosed steps: Your details, Build, Review & download. The app uses unmodified, locally hosted IBM Plex Sans and Mono fonts from IBM's official repository, with the SIL Open Font License retained. Settings, the 19-step breakdown, portfolio reports and technical files remain collapsed until opened.
 
 Browser checks covered required-field errors, a garden-case preview with a leading-zero student ID, navigation back to the saved course-enrolment results, grouped ER/normalisation links and a real PDF/ZIP rebuild. The review spinner was visibly active during that export. No new AI request or database exercise was needed for these interface checks. No browser console errors were observed. Widths 375, 768 and 1280px had no horizontal overflow; body and input text were 17px and IBM Plex Sans was loaded. Reduced-motion CSS disables animation while retaining status text. All 119 existing tests passed; the HTTP integration check now also verifies font MIME/signature and rejects unknown font paths.
+
+## Three-step repository pipeline — 24 October 2026
+
+Replaced the template-copy export with a separate private assessment repository. The app captures four fields, creates `Surname_Firstname_StudentID`, runs seven visible stages and pushes a descriptive commit after each completed stage. The five portfolio folders are at the repository root. A conventional `README.md` displays the overview on GitHub; the named README is retained for the correctly named download package. Generator sources, credentials and AI diagnostic files stay out of the assessment repository.
+
+Browser pilot: fictional Robin Hart, ID `000246`, freely entered **Community garden plot allocation**. GitHub account `arizonal2014`; private output [Hart_Robin_000246](https://github.com/arizonal2014/Hart_Robin_000246). Job `445144f0-c3ba-4416-a8d4-2d74aafe99aa`. Two model attempts and two execution-package attempts were used; validation failures were retained and corrected before execution.
+
+- PostgreSQL: three tables, two foreign keys, three checks, one partial unique index and 12 expected record rejections.
+- Portfolio 2: three queries, 20,000 performance rows, six measured plans and matching before/after lookup results.
+- Portfolio 3: actual commit, rollback, isolation, lost update and row-lock blocking checks passed in distinct sessions.
+- Portfolio 4: four MongoDB documents, four verified queries and two expected rejections.
+- Portfolio 5: proposed distributed architecture and discussion, accurately labelled as a proposal.
+- Seven report screenshots and all three PDF pages were verified to contain only grey RGB pixels. Evidence source and image hashes matched the manifest. The PDF embeds IBM Plex Sans and has three pages.
+- The ZIP was downloaded using Chrome and contains 84 named files, including the editable Markdown summary and seven images.
+- Seven genuine stage commits were pushed. An eighth correction added the visible GitHub README. The browser confirmed the private repository, root folders, overview and eight-commit history. No timestamps were changed.
+- Refresh during generation and a server restart after completion restored the same job without another AI call.
+- 126 automated tests passed, including real local Git repository creation/commits, name collisions, symlink rejection, remote student-edit protection, initial-run retry, checkpoint ordering and restart restoration. Test GitHub calls are mocked; the browser pilot used real GitHub and actual databases.
+
+Proof: [completed pipeline](verification/ThreeStep_Pipeline.jpg), [completion view](verification/ThreeStep_Complete.jpg), [repository](verification/ThreeStep_Repository.jpg).
+
+Generation no longer waits for a reflection form. The editable summary contains an individual-reflection section for the student to complete. `packageReady` and completion of the generator do not assert that the student's final reflection or academic submission has been completed.
+
+The new GitHub device sign-in supports the additional repository-creation access needed by Codespaces. This pilot used the existing local GitHub CLI credential; a fresh Codespaces OAuth authorization has not been completed in this verification run. Each student must approve their own access on GitHub. The prior Codespaces checks above remain historical evidence of the database runtime, rather than a claim of a new cloud sign-in test.
+
+The new sign-in helper was also exercised against GitHub's real device endpoint in a temporary isolated configuration. It returned the expected device-code format and GitHub code-entry URL. The process was then cancelled without granting authorization or storing a new token. This verifies the sign-in launch and parsing, while leaving each student's actual consent to them.

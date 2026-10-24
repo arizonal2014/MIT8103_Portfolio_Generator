@@ -4,7 +4,7 @@ The assessment assigns 7 marks to practical transaction and concurrency work: co
 
 1. Choose **Generate my portfolio**. The guided run executes Portfolio 3 after its prerequisites.
 2. Open the Portfolio 3 report links and inspect the saved scripts and results.
-3. Leave **Save real checkpoints** checked to push completed stages to your own private repository. Use `npm run save` if saving manually.
+3. Completed stages are saved automatically to your separate private portfolio repository. Open the commit link in the pipeline to inspect the saved work.
 
 No extra AI request is needed. Files use your name and ID under `portfolio-3-transactions-concurrency/`.
 

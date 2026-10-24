@@ -1,3 +1,5 @@
+> Earlier implementation notes. For the current three-step flow, follow [Start your portfolio](STUDENT_START.md).
+
 # Run your own case study
 
 The generator accepts a free-text case study. It no longer requires the hospital scenario or copies its fixed model. The optional library-example button is only a starting suggestion.

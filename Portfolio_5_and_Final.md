@@ -1,3 +1,5 @@
+> Earlier implementation notes. For the current three-step flow, follow [Start your portfolio](STUDENT_START.md).
+
 # Portfolio 5 and final summary
 
 Portfolio 5 is worth 6 marks. The brief permits a discussion or a setup. This generator uses a **case-specific discussion**: a proposed three-member MongoDB replica set, availability and consistency, sharding trade-offs and cloud recovery. The architecture is labelled as proposed; no live replication or failover result is claimed.
