@@ -27,7 +27,7 @@ async function fixture(fail=false){
  const base={enabled:true,ready:Promise.resolve(),get:key=>started&&key===id?structuredClone(job):null,artifact:()=>null,start:async()=>{started=true;return structuredClone(job);},settled:async()=>{},queriesSettled:async()=>{},transactionsSettled:async()=>{},mongoSettled:async()=>{}};
  for(const[n,method]of[[2,'startQueries'],[3,'startTransactions'],[4,'startMongo']])base[method]=async()=>{sequence.push(n);if(n===4)runs++;job['portfolio'+n]={status:n===4&&fail?'failed':'complete',message:n===4&&fail?'Mongo unavailable':'Checks passed'};};
  const repository={ensure:async()=>({verified:true,name:job.prefix,sha:'initial',url:'https://github.com/fixture/'+job.prefix}),save:async(repo,source,prefix,label)=>({stage:label,sha:'sha'+(++counter),savedAt:new Date().toISOString(),url:repo.url+'/commit/'+counter})};
- const flow=createGuidedWorkflow(base,{runsDirectory:root,root,repository,inspect:async()=>({verified:true}),finish:async()=>{sequence.push(5);return{status:'complete',message:'Package ready',stages:[],submissionReady:false};}});await flow.ready;
+ const flow=createGuidedWorkflow(base,{runsDirectory:root,root,repository,prepare:async()=>({output:'fixture-only'}),capture:async()=>[],inspect:async()=>({verified:true}),finish:async()=>{sequence.push(5);return{status:'complete',message:'Package ready',stages:[],submissionReady:false};}});await flow.ready;
  const begin=()=>flow.start({firstName:'Ada',surname:'Doe',studentId:'0001',provider:'copilot',caseStudy:'A library borrowing system.',requestId:id,allowLive:true});
  return{flow,id,runs:()=>runs,root,base,sequence,begin};
 }

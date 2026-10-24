@@ -26,7 +26,7 @@ test('creates correctly named private repository, clean root and progressive com
  const {root,remote,repo,posts}=await fixture();const target=await repo.ensure(input,id);assert.equal(target.name,'Test_Robin_0009');assert.equal(posts(),1);
  const source=path.join(root,'output');await mkdir(path.join(source,'portfolio-1-database-design'),{recursive:true});await writeFile(path.join(source,'portfolio-1-database-design','Test_Robin_0009_P1_Schema.sql'),'CREATE TABLE example(id integer primary key);');
  await repo.save(target,source,target.name,'Add database design',{onlyFolders:['portfolio-1-database-design']});
- await writeFile(path.join(source,'Test_Robin_0009_Summary.md'),'# Library\n');await repo.save(target,source,target.name,'Add final summary');
+ await writeFile(path.join(source,'Test_Robin_0009_FinalSummary.md'),'# Library\n');await repo.save(target,source,target.name,'Add final summary');
  const files=(await execute('git',['--git-dir',remote,'ls-tree','-r','--name-only','main'])).stdout;assert.match(files,/^portfolio-1-database-design\/Test_Robin_0009_P1_Schema.sql/m);assert.doesNotMatch(files,/^Test_Robin_0009\//m);assert.doesNotMatch(files,/package.json|server.mjs/);
  const commits=(await execute('git',['--git-dir',remote,'log','main','--format=%s'])).stdout.trim().split('\n');assert.deepEqual(commits,['Add final summary','Add database design','Create named database portfolio and five activity folders']);
 });
@@ -37,7 +37,14 @@ test('a symbolic source cannot enter the assessment repository',async()=>{const{
 
 test('remote student edits stop an export instead of overwriting their changes',async()=>{
  const{root,remote,repo}=await fixture();const target=await repo.ensure(input,id),other=path.join(root,'student-copy');await execute('git',['clone','--branch','main',remote,other]);
- await execute('git',['config','user.name','Student'],{cwd:other});await execute('git',['config','user.email','student@example.invalid'],{cwd:other});await writeFile(path.join(other,'Test_Robin_0009_Summary.md'),'My individual edits');await execute('git',['add','.'],{cwd:other});await execute('git',['commit','-m','Write my reflection'],{cwd:other});await execute('git',['push','origin','HEAD:main'],{cwd:other});
- const source=path.join(root,'output');await mkdir(source);await writeFile(path.join(source,'Test_Robin_0009_Summary.md'),'generated');await assert.rejects(repo.save(target,source,target.name,'Save'),/edited on GitHub/);
- assert.equal((await execute('git',['--git-dir',remote,'show','main:Test_Robin_0009_Summary.md'])).stdout,'My individual edits');
+ await execute('git',['config','user.name','Student'],{cwd:other});await execute('git',['config','user.email','student@example.invalid'],{cwd:other});await writeFile(path.join(other,'Test_Robin_0009_FinalSummary.md'),'My individual edits');await execute('git',['add','.'],{cwd:other});await execute('git',['commit','-m','Write my reflection'],{cwd:other});await execute('git',['push','origin','HEAD:main'],{cwd:other});
+ const source=path.join(root,'output');await mkdir(source);await writeFile(path.join(source,'Test_Robin_0009_FinalSummary.md'),'generated');await assert.rejects(repo.save(target,source,target.name,'Save'),/edited on GitHub/);
+ assert.equal((await execute('git',['--git-dir',remote,'show','main:Test_Robin_0009_FinalSummary.md'])).stdout,'My individual edits');
+});
+
+test('cleanup removes old diagnostics through an ordinary commit and keeps history',async()=>{
+ const{repo,root,remote}=await fixture(),target=await repo.ensure(input,id);
+ await writeFile(path.join(target.directory,'Test_Robin_0009_RunManifest.json'),'private internal state');await execute('git',['add','.'],{cwd:target.directory});await execute('git',['commit','-m','Older export with diagnostic'],{cwd:target.directory});
+ const source=path.join(root,'output');await mkdir(source);await writeFile(path.join(source,'Test_Robin_0009_README.md'),'# Clean assessment');await repo.save(target,source,target.name,'Clean assessment export');
+ const files=(await execute('git',['--git-dir',remote,'ls-tree','-r','--name-only','main'])).stdout;assert.doesNotMatch(files,/\.json$/m);assert.doesNotMatch(files,/^Test_Robin_0009_README.md/m);assert.match(files,/README.md/);const history=(await execute('git',['--git-dir',remote,'log','main','--format=%s'])).stdout;assert.match(history,/Older export with diagnostic/);assert.equal((await repo.ensure(input,id)).sha.length,40);
 });

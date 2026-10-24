@@ -23,11 +23,11 @@ Completed stages are committed and pushed automatically with their actual timest
 | Portfolio 3 · 7 marks | Commit, rollback, isolation and two-session concurrency evidence |
 | Portfolio 4 · 7 marks | MongoDB model, inserts, queries, aggregation and validation checks |
 | Portfolio 5 · 6 marks | Proposed architecture and distributed database discussion |
-| Final documentation · 6 marks | Editable summary, three-page PDF, references, AI declaration and space for individual reflection |
+| Final documentation · 6 marks | Editable summary, three-page PDF, references, an AI declaration and a case-specific technical reflection to review |
 
-Documents and diagrams use black text on white. Seven screenshots render saved execution reports, backed by logs and result files. Portfolio 5 uses the assessment's discussion option; it does not claim a live distributed deployment.
+The submission contains 28 files: readable SQL and JavaScript, portfolio READMEs, design and normalisation documents, the ER image, seven evidence screenshots, and the final summary in Markdown and PDF. Internal JSON, HTML reports, logs, hashes and run state stay in the workspace. Portfolio 5 uses the assessment's discussion option; it does not claim a live distributed deployment.
 
-Generation finishes without a reflection form. Complete your individual reflection and review the work in the editable summary. The generated PDF is a snapshot: update your submission PDF after editing. Submit through the university's assessment form yourself.
+Generation finishes without a reflection form. Review and personalise the technical reflection and final summary. The generated PDF is a snapshot: update your submission PDF after editing. Submit through the university's assessment form yourself.
 
 **AI provider:** Copilot, using your account and allowance. Names and student IDs are kept out of model prompts. Case studies are freely entered; designs must pass the supported schema, rule and execution checks. Unsupported or failing designs stop visibly. Gemini and Codex are not connected yet.
 

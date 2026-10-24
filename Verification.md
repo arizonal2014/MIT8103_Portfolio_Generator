@@ -1,12 +1,12 @@
 # Generator verification
 
-Current scope: free-text case generation through Copilot, restricted execution packages, actual PostgreSQL schema/data/rejection checks, case-derived ER diagrams and worked normalisation, connected in the local browser app. The hospital-only gate and fixed production model/layout have been removed. GitHub template creation, Codespaces startup and reviewed-output commit/push have also been verified using a separate browser account. Portfolio 2 queries/indexing and Portfolio 3 transactions/concurrency are connected. Portfolio 4 MongoDB modelling and queries are also connected. Portfolio 5 and automatic screenshots are unfinished. No assessment was submitted.
+Current scope: the three-step app creates a private, correctly named assessment repository, executes Portfolios 1–4, produces Portfolio 5's permitted discussion, captures seven result images and exports a three-page summary and ZIP. The current submission has 28 files. Generator diagnostics stay in the ignored workspace. No assessment was submitted. Earlier sections below record historical milestones and their limitations; the latest cleanup check is recorded at the end.
 
 ## Automated checks
 
 Initial scaffold: six tests passed, zero failed. The tests cover names and leading-zero IDs, invalid input and unsafe paths, Unicode names and filename size, 19 pending stages, named folders and screenshot plans, repeated-run isolation, local HTTP serving, validation errors and rejection of cross-origin writes.
 
-Current suite: `npm test` passes 109 tests with zero failures. Checks cover models, provider isolation, restricted SQL bindings, execution packages, valid-seed preflight, exact rejection targets, numeric constraints, workflow guards, named artifacts and restored file links. Design tests cover differing entity counts, case-derived relationships, unchanged 2NF, a composite-key 2NF split, redundant superkeys, reconstruction, fingerprints, missing data and escaped values. Unit tests use fixtures/mocks and do not contact models or databases; real runs are recorded separately below.
+Current suite: `npm test` passes 136 tests with zero failures. The following coverage description began at the 109-test milestone. Checks cover models, provider isolation, restricted SQL bindings, execution packages, valid-seed preflight, exact rejection targets, numeric constraints, workflow guards, named artifacts and restored file links. Design tests cover differing entity counts, case-derived relationships, unchanged 2NF, a composite-key 2NF split, redundant superkeys, reconstruction, fingerprints, missing data and escaped values. Unit tests use fixtures/mocks and do not contact models or databases; real runs are recorded separately below.
 
 `node --check server.mjs` and `node --check public/app.mjs` completed successfully.
 
@@ -257,3 +257,22 @@ Generation no longer waits for a reflection form. The editable summary contains 
 The new GitHub device sign-in supports the additional repository-creation access needed by Codespaces. This pilot used the existing local GitHub CLI credential; a fresh Codespaces OAuth authorization has not been completed in this verification run. Each student must approve their own access on GitHub. The prior Codespaces checks above remain historical evidence of the database runtime, rather than a claim of a new cloud sign-in test.
 
 The new sign-in helper was also exercised against GitHub's real device endpoint in a temporary isolated configuration. It returned the expected device-code format and GitHub code-entry URL. The process was then cancelled without granting authorization or storing a new token. This verifies the sign-in launch and parsing, while leaving each student's actual consent to them.
+
+
+## Clean assessment export — 24 October 2026
+
+Checked the submission contents against the assessment brief's five activities and final-document requirements, and compared the presentation with the manual library reference. The exported package now has **28 files** rather than 84. It retains the case description, relational schema, keys and constraints, ER diagram, worked normalisation, executable SQL/JavaScript, actual query and transaction results, all six measured plans, MongoDB model/results, distributed-database discussion, references and AI declaration. Seven result images and one ER image are included. The editable summary and PDF share the same content; the PDF has three pages.
+
+JSON diagnostics, raw logs, HTML reports, fingerprints, timestamp captions, duplicate declarations and separate review templates are not published or zipped. Original execution records and capture hashes remain in the ignored workspace for verification and retries. Result images show measured values as report pages; they are not presented as photographs of a manual terminal session. Portfolio 5 remains a proposal, not a claimed deployment. The case-specific reflection is a technical starting point for the student to review and personalise; the declaration accurately identifies automated execution.
+
+The new Mermaid renderer loads the locally hosted IBM Plex font before measuring text. This fixed clipping of the key and attribute labels. Actual garden, library and hospital diagrams were rendered and visually checked. The summary's PNG, GitHub image and source Mermaid agree. All three final PDF pages were rasterised and inspected, with no clipped diagram text or overflowing content.
+
+All **136 automated tests passed**, including exact export contents, unexpected-file and symlink rejection, safe Markdown rendering, readable SQL, two-session ordering, plan evidence, summary facts, normal Git cleanup commits, restart restoration and protection of remote student edits. `git diff --check` passed. Dependency auditing reported zero known vulnerabilities.
+
+The clean scripts were also replayed in fresh, owned PostgreSQL and MongoDB containers. Schema/sample data, 12 expected constraint rejections, three queries, six plans, commit/rollback, two-session blocking with final counter 3, four MongoDB documents, four queries, and rejection codes 121/11000 all passed. The temporary containers were removed. This replay used the scripts destined for submission rather than the private machine-readable execution harness.
+
+The existing fictional garden run (`445144f0-c3ba-4416-a8d4-2d74aafe99aa`) was rebuilt from its saved successful results, without new AI or database calls. Normal cleanup commits were pushed to [Hart_Robin_000246](https://github.com/arizonal2014/Hart_Robin_000246), retaining its real prior history. The current private repository contains 28 files and 12 genuine commits. The published tree contains no JSON, HTML or log files.
+
+Chrome verified the root folders, summary and loaded ER image (natural width 1614 pixels). The app's **Portfolio ZIP** download produced 28 files and eight PNGs, with no forbidden diagnostics. Its SHA-256 matched the current generated archive. The local app was left open for review. This cleanup did not retest fresh Codespaces OAuth consent; earlier cloud-runtime verification remains separate.
+
+![Clean assessment repository](verification/Clean_Assessment_Repository.jpg)

@@ -55,7 +55,7 @@ function display(job){
  if(complete){
   $('#result-case').textContent=(job.title||job.caseStudy)+' · '+job.prefix;
   $('#result-count').textContent='Five portfolios · '+(guided.checkpoints?.length||0)+' saved commits';
-  $('#open-repository').href=repo.url;$('#edit-summary').href=repo.url+'/edit/'+encodeURIComponent(repo.branch||'main')+'/'+encodeURIComponent(job.prefix+'_Summary.md');
+  $('#open-repository').href=repo.url;$('#edit-summary').href=repo.url+'/edit/'+encodeURIComponent(repo.branch||'main')+'/'+encodeURIComponent(job.prefix+'_FinalSummary.md');
   for(const [id,key]of [['summary-pdf','summary'],['summary-source','summary-source'],['portfolio-zip','download'],['quick-guide','quick-guide']]){const file=job.files.find(f=>f.url.endsWith('/'+key));if(file)$('#'+id).href=file.url;}
   if(!viewingPipeline)step(3);
  }else step(2);
