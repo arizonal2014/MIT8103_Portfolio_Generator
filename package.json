@@ -1,0 +1,20 @@
+{
+  "name": "mit8103-portfolio-generator",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "setup:workspace": "node scripts/setup-workspace.mjs",
+    "workspace": "node scripts/start-workspace.mjs",
+    "test": "node --test test/*.test.mjs",
+    "test:copilot": "node scripts/test-copilot.mjs",
+    "test:postgres": "node scripts/test-postgres.mjs"
+  },
+  "dependencies": {
+    "@github/copilot": "1.0.103",
+    "ajv": "8.20.0"
+  }
+}

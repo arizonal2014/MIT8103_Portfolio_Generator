@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.invalid/mit8103/case-spec/v1",
+  "title": "MIT 8103 case specification, version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "scenario", "entities", "businessRules", "queries", "optimisation", "transactions", "noSql", "distributed", "syntheticDataOnly"],
+  "properties": {
+    "version": { "const": 1 },
+    "syntheticDataOnly": { "const": true },
+    "scenario": {
+      "type": "object", "additionalProperties": false,
+      "required": ["title", "description", "users", "operations", "scope", "assumptions"],
+      "properties": {
+        "title": { "$ref": "#/definitions/text" },
+        "description": { "$ref": "#/definitions/text" },
+        "users": { "$ref": "#/definitions/textList" },
+        "operations": { "$ref": "#/definitions/textList" },
+        "scope": { "$ref": "#/definitions/text" },
+        "assumptions": { "type": "array", "maxItems": 12, "items": { "$ref": "#/definitions/text" } }
+      }
+    },
+    "entities": {
+      "type": "array", "minItems": 2, "maxItems": 8,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["name", "purpose", "fields", "primaryKey", "uniqueKeys", "foreignKeys"],
+        "properties": {
+          "name": { "$ref": "#/definitions/identifier" },
+          "purpose": { "$ref": "#/definitions/text" },
+          "fields": {
+            "type": "array", "minItems": 2, "maxItems": 20,
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["name", "type", "required"],
+              "properties": {
+                "name": { "$ref": "#/definitions/identifier" },
+                "type": { "enum": ["id", "text", "integer", "decimal", "boolean", "timestamp", "date"] },
+                "required": { "type": "boolean" }
+              }
+            }
+          },
+          "primaryKey": { "$ref": "#/definitions/fields" },
+          "uniqueKeys": { "type": "array", "maxItems": 12, "uniqueItems": true, "items": { "$ref": "#/definitions/fields" } },
+          "foreignKeys": {
+            "type": "array", "maxItems": 12,
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["fields", "targetEntity", "targetFields"],
+              "properties": {
+                "fields": { "$ref": "#/definitions/fields" },
+                "targetEntity": { "$ref": "#/definitions/identifier" },
+                "targetFields": { "$ref": "#/definitions/fields" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "businessRules": {
+      "type": "array", "minItems": 2, "maxItems": 20,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "description", "entity", "fields", "enforcement"],
+        "properties": {
+          "id": { "$ref": "#/definitions/identifier" },
+          "description": { "$ref": "#/definitions/text" },
+          "entity": { "$ref": "#/definitions/identifier" },
+          "fields": { "$ref": "#/definitions/fields" },
+          "enforcement": { "enum": ["not_null", "unique", "foreign_key", "check", "partial_unique", "workflow"] }
+        }
+      }
+    },
+    "queries": {
+      "type": "array", "minItems": 3, "maxItems": 6,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "purpose", "entities", "kind"],
+        "properties": {
+          "id": { "$ref": "#/definitions/identifier" },
+          "purpose": { "$ref": "#/definitions/text" },
+          "entities": { "$ref": "#/definitions/fields" },
+          "kind": { "enum": ["join", "filter", "aggregate"] }
+        }
+      }
+    },
+    "optimisation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entity", "filterField", "indexType", "benchmarkRows"],
+      "properties": {
+        "entity": { "$ref": "#/definitions/identifier" },
+        "filterField": { "$ref": "#/definitions/identifier" },
+        "indexType": { "const": "btree" },
+        "benchmarkRows": { "type": "integer", "minimum": 10000, "maximum": 100000 }
+      }
+    },
+    "transactions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entity", "commit", "rollback", "concurrencyRuleId", "concurrencyMethod"],
+      "properties": {
+        "entity": { "$ref": "#/definitions/identifier" },
+        "commit": { "$ref": "#/definitions/text" },
+        "rollback": { "$ref": "#/definitions/text" },
+        "concurrencyRuleId": { "$ref": "#/definitions/identifier" },
+        "concurrencyMethod": { "enum": ["unique_constraint", "row_lock", "serializable", "exclusion_constraint"] }
+      }
+    },
+    "noSql": {
+      "type": "object", "additionalProperties": false,
+      "required": ["collection", "sourceEntities", "embeddedEntities", "documentPurpose", "eventTypes", "variableFields"],
+      "properties": {
+        "collection": { "$ref": "#/definitions/identifier" },
+        "sourceEntities": { "$ref": "#/definitions/fields" },
+        "embeddedEntities": { "$ref": "#/definitions/fields" },
+        "documentPurpose": { "$ref": "#/definitions/text" },
+        "eventTypes": { "$ref": "#/definitions/fields" },
+        "variableFields": { "$ref": "#/definitions/fields" }
+      }
+    },
+    "distributed": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "replicationMembers", "description"],
+      "properties": {
+        "mode": { "const": "discussion" },
+        "replicationMembers": { "const": 3 },
+        "description": { "$ref": "#/definitions/text" }
+      }
+    }
+  },
+  "definitions": {
+    "identifier": { "type": "string", "minLength": 1, "maxLength": 40, "pattern": "^[a-z][a-z0-9_]*$" },
+    "text": { "type": "string", "minLength": 5, "maxLength": 1200, "pattern": "\\S" },
+    "textList": { "type": "array", "minItems": 1, "maxItems": 12, "uniqueItems": true, "items": { "$ref": "#/definitions/text" } },
+    "fields": { "type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true, "items": { "$ref": "#/definitions/identifier" } }
+  }
+}

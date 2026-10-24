@@ -1,0 +1,300 @@
+{
+  "version": 1,
+  "syntheticDataOnly": true,
+  "scenario": {
+    "title": "Hospital appointment booking",
+    "description": "A small fictional hospital system manages doctors, fixed appointment slots, fictional patients, and bookings. Each slot can have at most one active booking. Cancelled bookings remain in the booking history.",
+    "users": [
+      "Fictional patients viewing available slots and their bookings",
+      "Scheduling staff managing slots and bookings"
+    ],
+    "operations": [
+      "List available slots for a doctor and date",
+      "Book an available slot for a patient",
+      "Cancel a booking while retaining its history",
+      "Review active and cancelled bookings"
+    ],
+    "scope": "Relational database exercise with a proposed MongoDB event model and distributed-systems discussion; no running replica set.",
+    "assumptions": [
+      "All names, identifiers, dates, and records are synthetic.",
+      "A slot belongs to one doctor and has a fixed start and end time.",
+      "Bookings have active or cancelled status; cancelled records are retained and do not reserve a slot.",
+      "An active booking is the only kind of booking that reserves a slot.",
+      "Separate benchmark plan: generate 25000 synthetic bookings, compare the same slot_id lookup with and without a B-tree index, and report repeated-run median latency after warm-up.",
+      "No diagnoses, payments, real patient data, or student names and IDs are included."
+    ]
+  },
+  "entities": [
+    {
+      "name": "patient",
+      "purpose": "Stores minimal fictional patient identity for appointment booking.",
+      "fields": [
+        {
+          "name": "patient_id",
+          "type": "id",
+          "required": true
+        },
+        {
+          "name": "display_name",
+          "type": "text",
+          "required": true
+        }
+      ],
+      "primaryKey": [
+        "patient_id"
+      ],
+      "uniqueKeys": [],
+      "foreignKeys": []
+    },
+    {
+      "name": "doctor",
+      "purpose": "Stores fictional doctor names for scheduling.",
+      "fields": [
+        {
+          "name": "doctor_id",
+          "type": "id",
+          "required": true
+        },
+        {
+          "name": "display_name",
+          "type": "text",
+          "required": true
+        }
+      ],
+      "primaryKey": [
+        "doctor_id"
+      ],
+      "uniqueKeys": [],
+      "foreignKeys": []
+    },
+    {
+      "name": "slot",
+      "purpose": "Defines a fixed appointment time offered by one doctor.",
+      "fields": [
+        {
+          "name": "slot_id",
+          "type": "id",
+          "required": true
+        },
+        {
+          "name": "doctor_id",
+          "type": "id",
+          "required": true
+        },
+        {
+          "name": "starts_at",
+          "type": "timestamp",
+          "required": true
+        },
+        {
+          "name": "ends_at",
+          "type": "timestamp",
+          "required": true
+        }
+      ],
+      "primaryKey": [
+        "slot_id"
+      ],
+      "uniqueKeys": [
+        [
+          "doctor_id",
+          "starts_at"
+        ]
+      ],
+      "foreignKeys": [
+        {
+          "fields": [
+            "doctor_id"
+          ],
+          "targetEntity": "doctor",
+          "targetFields": [
+            "doctor_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "booking",
+      "purpose": "Records active or cancelled patient bookings; cancellation preserves the row as history.",
+      "fields": [
+        {
+          "name": "booking_id",
+          "type": "id",
+          "required": true
+        },
+        {
+          "name": "patient_id",
+          "type": "id",
+          "required": true
+        },
+        {
+          "name": "slot_id",
+          "type": "id",
+          "required": true
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "required": true
+        },
+        {
+          "name": "cancelled_at",
+          "type": "timestamp",
+          "required": false
+        }
+      ],
+      "primaryKey": [
+        "booking_id"
+      ],
+      "uniqueKeys": [],
+      "foreignKeys": [
+        {
+          "fields": [
+            "patient_id"
+          ],
+          "targetEntity": "patient",
+          "targetFields": [
+            "patient_id"
+          ]
+        },
+        {
+          "fields": [
+            "slot_id"
+          ],
+          "targetEntity": "slot",
+          "targetFields": [
+            "slot_id"
+          ]
+        }
+      ]
+    }
+  ],
+  "businessRules": [
+    {
+      "id": "booking_status_values",
+      "description": "Booking status must be active or cancelled; cancelled_at is set when a booking is cancelled.",
+      "entity": "booking",
+      "fields": [
+        "status",
+        "cancelled_at"
+      ],
+      "enforcement": "check"
+    },
+    {
+      "id": "one_active_booking_per_slot",
+      "description": "A slot has at most one booking whose status is active; enforce with a partial unique constraint on slot_id for active rows.",
+      "entity": "booking",
+      "fields": [
+        "slot_id",
+        "status"
+      ],
+      "enforcement": "partial_unique"
+    },
+    {
+      "id": "booking_patient_exists",
+      "description": "Every booking references an existing patient.",
+      "entity": "booking",
+      "fields": [
+        "patient_id"
+      ],
+      "enforcement": "foreign_key"
+    },
+    {
+      "id": "booking_slot_exists",
+      "description": "Every booking references an existing slot.",
+      "entity": "booking",
+      "fields": [
+        "slot_id"
+      ],
+      "enforcement": "foreign_key"
+    },
+    {
+      "id": "unique_doctor_slot_start",
+      "description": "A doctor cannot have two slots with the same start time.",
+      "entity": "slot",
+      "fields": [
+        "doctor_id",
+        "starts_at"
+      ],
+      "enforcement": "unique"
+    }
+  ],
+  "queries": [
+    {
+      "id": "patient_booking_details",
+      "purpose": "Join booking to patient and slot, then slot to doctor; return a patient's booking status and scheduled doctor and time.",
+      "entities": [
+        "booking",
+        "patient",
+        "slot",
+        "doctor"
+      ],
+      "kind": "join"
+    },
+    {
+      "id": "available_doctor_slots",
+      "purpose": "Filter slots for a selected doctor and date, excluding slots with an active booking by joining slot to booking and retaining slots with no matching active row.",
+      "entities": [
+        "slot",
+        "doctor",
+        "booking"
+      ],
+      "kind": "filter"
+    },
+    {
+      "id": "active_bookings_by_doctor",
+      "purpose": "Join booking to slot and doctor, filter to active bookings in a date range, then group by doctor and date to count scheduled appointments.",
+      "entities": [
+        "booking",
+        "slot",
+        "doctor"
+      ],
+      "kind": "aggregate"
+    }
+  ],
+  "optimisation": {
+    "entity": "booking",
+    "filterField": "slot_id",
+    "indexType": "btree",
+    "benchmarkRows": 25000
+  },
+  "transactions": {
+    "entity": "booking",
+    "commit": "Insert an active booking and commit only if the slot reference is valid and the one_active_booking_per_slot partial unique constraint is satisfied.",
+    "rollback": "If validation fails or another transaction has already booked the slot, roll back the insert and report that the slot is unavailable; do not create a booking history row for a failed attempt.",
+    "concurrencyRuleId": "one_active_booking_per_slot",
+    "concurrencyMethod": "unique_constraint"
+  },
+  "noSql": {
+    "collection": "appointment_events",
+    "sourceEntities": [
+      "booking",
+      "patient",
+      "slot",
+      "doctor"
+    ],
+    "embeddedEntities": [
+      "patient",
+      "slot",
+      "doctor"
+    ],
+    "documentPurpose": "Append-only event documents record booking creation and cancellation, with synthetic IDs and minimal snapshots so the appointment history can be read without joining current records.",
+    "eventTypes": [
+      "booking_created",
+      "booking_cancelled"
+    ],
+    "variableFields": [
+      "cancellation_note"
+    ]
+  },
+  "distributed": {
+    "mode": "discussion",
+    "replicationMembers": 3,
+    "description": "Proposed discussion only: consider a three-member replica set for availability and failover, and explain how replication lag and write concerns affect booking visibility. The one-active-booking rule must remain enforced by the authoritative database constraint; this is not a running replica set."
+  }
+}

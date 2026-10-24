@@ -1,0 +1,15 @@
+{
+  "name": "MIT 8103 Portfolio Generator",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:3-22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {"installDockerBuildx": false, "dockerDashComposeVersion": "none"}
+  },
+  "hostRequirements": {"cpus": 2, "memory": "4gb", "storage": "16gb"},
+  "forwardPorts": [4310],
+  "portsAttributes": {"4310": {"label": "Portfolio generator", "onAutoForward": "openBrowser", "protocol": "http"}},
+  "postCreateCommand": "npm run setup:workspace",
+  "postStartCommand": "npm run workspace",
+  "customizations": {"codespaces": {"openFiles": ["README.md"]}, "vscode": {"extensions": ["GitHub.copilot", "GitHub.copilot-chat"]}},
+  "remoteUser": "node"
+}

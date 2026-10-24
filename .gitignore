@@ -1,0 +1,6 @@
+runs/
+node_modules/
+.env
+.env.*
+.DS_Store
+.workspace-state/
