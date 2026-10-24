@@ -8,6 +8,7 @@ try{
   const login=(await run('gh',['api','user','--jq','.login'],{cwd:root})).stdout.trim();
   if(repo.isTemplate)throw new Error('Create your own repository from the template before saving.');
   if(repo.owner.login.toLowerCase()!==login.toLowerCase())throw new Error('Save is restricted to your own repository.');
+  if((await run('git',['status','--porcelain'],{cwd:root})).stdout.trim())throw new Error('Commit or set aside your current repository edits before exporting a new checkpoint.');
   const output=await preparePortfolioExport(root);
   await run('git',['add','--',output.prefix],{cwd:root});
   let changes=true;try{await run('git',['diff','--cached','--quiet','--',output.prefix],{cwd:root});changes=false;}catch{}
