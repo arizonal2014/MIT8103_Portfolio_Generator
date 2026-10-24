@@ -15,6 +15,6 @@ The second page compares one lookup before and after a B-tree index. A separate 
 
 Three measured runs per phase, median execution time, plan nodes, buffer counts, identical result checks and index size are saved. The planner is free to choose a sequential scan. A slower or unchanged result is reported honestly. This small warm-cache experiment does not establish production performance.
 
-Only two screenshots are suggested: query results and the combined before/after comparison. The generated README supplies your filenames and the `screenshots/` folder. Automatic screenshots are still pending; HTML, JSON and SQL evidence are saved automatically.
+Only two screenshots are suggested: query results and the combined before/after comparison. After `npm run save`, open your named folder in the Codespace Explorer, then `portfolio-2-query-optimisation/screenshots`. Right-click `screenshots`, choose **Upload**, and select your two images. Use `Surname_Firstname_StudentID_P2_QueryResults.png` and `Surname_Firstname_StudentID_P2_IndexComparison.png`, replacing the name and ID; keep `.jpg` if that is your original image format. Commit and push the images through Source Control. Automatic screenshots are still pending; HTML, JSON and SQL evidence are saved automatically.
 
 If an experiment fails, the app shows the error and offers **Retry Portfolio 2**. It retains Portfolio 1 and diagnostics and does not mark the query stages complete. A server restart restores completed result links; interrupted runs require an explicit retry.

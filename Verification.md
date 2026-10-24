@@ -1,12 +1,12 @@
 # Generator verification
 
-Current scope: free-text case generation through Copilot, restricted execution packages, actual PostgreSQL schema/data/rejection checks, case-derived ER diagrams and worked normalisation, connected in the local browser app. The hospital-only gate and fixed production model/layout have been removed. GitHub template creation, Codespaces startup and reviewed-output commit/push have also been verified using a separate browser account. Remaining portfolios and automatic screenshots are unfinished. No assessment was submitted.
+Current scope: free-text case generation through Copilot, restricted execution packages, actual PostgreSQL schema/data/rejection checks, case-derived ER diagrams and worked normalisation, connected in the local browser app. The hospital-only gate and fixed production model/layout have been removed. GitHub template creation, Codespaces startup and reviewed-output commit/push have also been verified using a separate browser account. Portfolio 2 queries and indexing are now connected. Portfolios 3–5 and automatic screenshots are unfinished. No assessment was submitted.
 
 ## Automated checks
 
 Initial scaffold: six tests passed, zero failed. The tests cover names and leading-zero IDs, invalid input and unsafe paths, Unicode names and filename size, 19 pending stages, named folders and screenshot plans, repeated-run isolation, local HTTP serving, validation errors and rejection of cross-origin writes.
 
-Current suite: `npm test` passes 87 tests with zero failures. Checks cover models, provider isolation, restricted SQL bindings, execution packages, valid-seed preflight, exact rejection targets, numeric constraints, workflow guards, named artifacts and restored file links. Design tests cover differing entity counts, case-derived relationships, unchanged 2NF, a composite-key 2NF split, redundant superkeys, reconstruction, fingerprints, missing data and escaped values. Unit tests use fixtures/mocks and do not contact models or databases; real runs are recorded separately below.
+Current suite: `npm test` passes 92 tests with zero failures. Checks cover models, provider isolation, restricted SQL bindings, execution packages, valid-seed preflight, exact rejection targets, numeric constraints, workflow guards, named artifacts and restored file links. Design tests cover differing entity counts, case-derived relationships, unchanged 2NF, a composite-key 2NF split, redundant superkeys, reconstruction, fingerprints, missing data and escaped values. Unit tests use fixtures/mocks and do not contact models or databases; real runs are recorded separately below.
 
 `node --check server.mjs` and `node --check public/app.mjs` completed successfully.
 
@@ -141,3 +141,24 @@ After review, `npm run save` copied only the named output folder, committed the 
 The test copy was created while the save command was still being developed. Its save-command files were fetched from the published template, reviewed and committed before the final test. Fresh template copies already contain these files and need no manual fetch.
 
 Automatic screenshot capture is still pending: the three images above were captured separately through browser tooling. They document this verification run and are not presented as student-captured evidence.
+
+
+## Portfolio 2 — query processing and optimisation
+
+The app now offers **Run Portfolio 2** after a successful case-generation run. It reuses that run's validated model and execution package, without additional AI calls. The supported exercise produces a join, filter and grouped count from actual case tables, with result rows and JSON `EXPLAIN (ANALYZE, BUFFERS)` output. A separate performance projection copies the selected field's type, generates a bounded synthetic distribution and compares the same lookup before/after a B-tree index. It does not pretend to scale complete business records or retain their constraints.
+
+All 92 automated tests passed locally and in the existing student Codespace. New checks cover case-derived SQL, multiple field types, plan interpretation when indexing is slower or unused, zero timings, restored Portfolio 2 links, failures preserving Portfolio 1, and stage completion only after passing results.
+
+Real local PostgreSQL runs passed for the library fixture (100,000 performance rows), student enrolment fixture (10,000 rows), and the existing freely typed college-library run (20,000 rows). The library fixture initially used the earlier JSON join presentation; later runs use ordinary named result columns for readability. Additional text and integer lookup runs passed after the startup fix described below.
+
+One additional local run stopped because `pg_isready` briefly accepted the image's temporary initialization server, which then shut down before psql connected. Its failed diagnostics are retained under `runs/postgres-queries-67030707-62ab-4078-a8ab-222989321889/`. The readiness check now waits on TCP 127.0.0.1, which that temporary server does not listen on. Subsequent text and integer runs passed (`postgres-queries-2d756808-a387-453f-8c1c-95888a5370a6` and `postgres-queries-a17a7c3a-9669-4b53-b80b-6e64ecb8094a`). The failed run was not turned into passing evidence.
+
+In Chrome, **Run Portfolio 2** completed the existing equipment-rental case in the private student Codespace, job `7431420a-bef7-4792-bbd4-24c8d016c37d`. Three real queries ran. Its `rentals.returned_at` timestamp field was used for a 20,000-row performance projection. The lookup matched 20 rows; before/after rows were identical. Three execution times before indexing were 1.599, 0.992 and 1.556 ms; after indexing they were 0.239, 0.187 and 0.236 ms. Medians were 1.556 and 0.236 ms. The plan changed from sequential scanning to a bitmap index/heap scan. Middle-run shared block counts changed from 112 hits/0 reads to 25 hits/0 reads. Index size was 172,032 bytes. These are observations from this warm-cache run, not promised results for other machines. PostgreSQL removed its owned temporary container and anonymous volumes.
+
+![Actual equipment-rental queries and results](verification/Cole_Jamie_000456_P2_QueryResults.jpg)
+
+![Actual equipment-rental before-and-after comparison](verification/Cole_Jamie_000456_P2_IndexComparison.jpg)
+
+`npm run save` committed and pushed the [Portfolio 2 folder](https://github.com/harrson2026/Cole_Jamie_000456/tree/main/Cole_Jamie_000456/portfolio-2-query-optimisation) at `18cef73377feddc35e9ca17f4dfba3a15a0a1580`. The two real browser captures were then added under its `screenshots/` folder and committed at `cb5df57e99e13605e8350de6afe85a5d0c0fe358`. The test-copy screenshot records explicitly identify these as separate browser captures during verification. They are not an automatic screenshot feature. Browser file upload required an additional extension permission, so the captured image bytes were placed through the Codespace terminal without changing that permission.
+
+Steps 12 and 13 are complete for these passing runs; Portfolio 1 individual review and Portfolios 3–5 remain pending. Failures show an error and permit an explicit retry. Saved links survive a server restart; a previously running query experiment is marked interrupted and not silently rerun.
