@@ -1,12 +1,12 @@
 # Generator verification
 
-Current scope: free-text case generation through Copilot, restricted execution packages, actual PostgreSQL schema/data/rejection checks, case-derived ER diagrams and worked normalisation, connected in the local browser app. The hospital-only gate and fixed production model/layout have been removed. GitHub template creation, Codespaces startup and reviewed-output commit/push have also been verified using a separate browser account. Portfolio 2 queries/indexing and Portfolio 3 transactions/concurrency are connected. Portfolios 4 and 5 and automatic screenshots are unfinished. No assessment was submitted.
+Current scope: free-text case generation through Copilot, restricted execution packages, actual PostgreSQL schema/data/rejection checks, case-derived ER diagrams and worked normalisation, connected in the local browser app. The hospital-only gate and fixed production model/layout have been removed. GitHub template creation, Codespaces startup and reviewed-output commit/push have also been verified using a separate browser account. Portfolio 2 queries/indexing and Portfolio 3 transactions/concurrency are connected. Portfolio 4 MongoDB modelling and queries are also connected. Portfolio 5 and automatic screenshots are unfinished. No assessment was submitted.
 
 ## Automated checks
 
 Initial scaffold: six tests passed, zero failed. The tests cover names and leading-zero IDs, invalid input and unsafe paths, Unicode names and filename size, 19 pending stages, named folders and screenshot plans, repeated-run isolation, local HTTP serving, validation errors and rejection of cross-origin writes.
 
-Current suite: `npm test` passes 99 tests with zero failures. Checks cover models, provider isolation, restricted SQL bindings, execution packages, valid-seed preflight, exact rejection targets, numeric constraints, workflow guards, named artifacts and restored file links. Design tests cover differing entity counts, case-derived relationships, unchanged 2NF, a composite-key 2NF split, redundant superkeys, reconstruction, fingerprints, missing data and escaped values. Unit tests use fixtures/mocks and do not contact models or databases; real runs are recorded separately below.
+Current suite: `npm test` passes 109 tests with zero failures. Checks cover models, provider isolation, restricted SQL bindings, execution packages, valid-seed preflight, exact rejection targets, numeric constraints, workflow guards, named artifacts and restored file links. Design tests cover differing entity counts, case-derived relationships, unchanged 2NF, a composite-key 2NF split, redundant superkeys, reconstruction, fingerprints, missing data and escaped values. Unit tests use fixtures/mocks and do not contact models or databases; real runs are recorded separately below.
 
 `node --check server.mjs` and `node --check public/app.mjs` completed successfully.
 
@@ -30,7 +30,7 @@ The provider browser check selected Gemini for a fictional hospital scenario. It
 
 ## Not verified or built yet
 
-Gemini/Codex authentication and generation; unrestricted-case SQL execution beyond the supported model profile; MongoDB execution; concurrent-session orchestration; automatic screenshot capture; PDF generation; package download; student submission. The form's screenshot feature still creates a plan only. Pilot screenshots were captured separately with browser tooling. Readiness checks and prompt previews must not be confused with connected provider execution.
+Gemini/Codex authentication and generation; unrestricted-case SQL execution beyond the supported model profile; automatic screenshot capture; PDF generation; package download; student submission. The form's screenshot feature still creates a plan only. Pilot screenshots were captured separately with browser tooling. Readiness checks and prompt previews must not be confused with connected provider execution.
 
 ## Live Copilot attempts
 
@@ -184,3 +184,31 @@ In the private student Codespace, Chrome's **Run Portfolio 3** completed job `74
 The two images were captured separately through browser tooling and placed in the run's named Portfolio 3 `screenshots/` folder. Their SHA-256 values and captured status were recorded in the evidence manifest. This is verification capture, not an automatic screenshot feature. `npm run save` exported the SQL, reports, both session logs, explanations and screenshots, then pushed the [private Portfolio 3 folder](https://github.com/harrson2026/Cole_Jamie_000456/tree/main/Cole_Jamie_000456/portfolio-3-transactions-concurrency) at real checkpoint `53d5d95612ef410c330787d4dc5c2c4135203b5c`. The GitHub folder and screenshot entries were checked in Chrome.
 
 Steps 14 and 15 are complete for these passing runs. Portfolios 4 and 5, automatic screenshots, the final summary and individual review remain pending. No assessment was submitted.
+
+
+## Portfolio 4 — MongoDB document modelling and queries
+
+The app's **Run Portfolio 4** reuses the saved case and valid synthetic records without another model request. It selects a source record that links to the declared NoSQL sources, matches related records through actual saved keys, and builds two illustrative event types. Embedded snapshots, external source-key references, flexible details and native event Dates are documented. Events are explicitly labelled `simulation: true`; their sequence and sample timestamps are not inferred business history. The explanation distinguishes imported JSON snapshot dates from the BSON event timestamp.
+
+The generated executable mongosh script creates a fresh collection with strict core-field validation, inserts the sample documents, adds a type/time index, runs four queries and verifies two expected rejections. The Node verifier independently compares all stored documents and query rows to the planned examples. Invalid date type 121 and duplicate event ID 11000 must both be observed, and stored data must remain unchanged. Index creation is verified without claiming a performance improvement. The script can also be replayed manually with a supplied Atlas/other MongoDB connection; the app's automatic route uses its own isolated container.
+
+All 109 automated tests passed locally and in the existing student Codespace. New tests cover related-row matching, disconnected source plans, variable metadata, script syntax and data quoting, executable Date filters, equivalent Extended JSON Date formatting, rejection of changed dates/types/data/results, strict validation, restored file links, preserving earlier portfolios, JS-file export, and interrupted/running-run guards.
+
+Two local fixture runs passed with MongoDB 7.0.43: library borrowing `mongo-documents-de4052ab-ff93-4b81-a666-b2c96fde8562` and student enrolment `mongo-documents-6f24e794-f8bb-4d6a-b117-b574d810514c`. Each inserted four documents, verified four query outputs and observed both expected rejection codes. Containers and anonymous volumes were removed.
+
+The initial local MongoDB 8.0 runs stopped at startup. A separate owned-container diagnostic identified the Docker kernel as `7.0.12-linuxkit`; the cached MongoDB 8 binary refused that kernel because of the [vendor-documented kernel/TCMalloc incompatibility](https://www.mongodb.com/docs/v8.0/release-notes/8.0/). The new lab standardises on MongoDB 7.0 for both local and Codespaces execution. No host kernel or existing database was changed. Initial failed run IDs were `mongo-documents-ab3887f2-e3e1-46c3-9f6f-5d78160f427d` and `mongo-documents-57d773a0-82c0-4e89-b7df-7ef82b42c0fc`. The runner now retains its owned server log and detects a stopped container early.
+
+Intermediate script/check failures were also retained: unsupported top-level await in a mongosh script (fixed by an async wrapper), mongosh's insert response exposing inserted IDs rather than an insertedCount property (now verified using acknowledged IDs), and relaxed Extended JSON omitting zero milliseconds (now compared as exact Date instants while retaining raw output). These attempts were not marked as passing evidence. The new script syntax and Date-format regression tests cover these boundaries.
+
+The local Chrome button completed the existing freely typed college-library case, job `0d6f9a71-3e35-407c-b861-8db64170d9d6`, at `2026-10-24T09:04:10.685Z`. Four inserted documents, four query results, both rejections and the unchanged stored documents passed. Steps 16 and 17 were completed only after these checks.
+
+
+The Codespaces browser run completed job `7431420a-bef7-4792-bbd4-24c8d016c37d` at `2026-10-24T09:07:25.454Z` with MongoDB **7.0.45**. Its `rental_events` collection contained four documents derived from the two saved rental records and linked customer/equipment snapshots. Queries by event type, nested source key, time range and grouped event counts returned 2, 2, 4 and 2 rows respectively. Both expected rejection codes were observed, all stored documents matched, and `_id_`/`event_type_time` indexes were verified. The owned container and anonymous volumes were removed.
+
+![Case-specific document model](verification/Cole_Jamie_000456_P4_DocumentModel.jpg)
+
+![Actual MongoDB queries and aggregation results](verification/Cole_Jamie_000456_P4_MongoDBResults.jpg)
+
+The two images were captured separately using browser tooling and placed in the named Portfolio 4 `screenshots/` folder. Captured status and image SHA-256 values were recorded in the evidence manifest. This is verification capture; automatic screenshot capture remains pending. `npm run save` exported the documents, model, executable JS script, actual results, logs, explanation and images, then pushed [the private Portfolio 4 folder](https://github.com/harrson2026/Cole_Jamie_000456/tree/main/Cole_Jamie_000456/portfolio-4-nosql) at real checkpoint `cc7a3b3416edaf6f6edb8ad3be43ccc9d13ecb53`. The file and screenshot listings were checked in Chrome. The two patch versions tested locally/in Codespaces both passed the same data checks.
+
+Atlas connectivity was not tested and is not an automatic app adapter. The exported mongosh script is connection-neutral and the guide documents manual replay in a fresh database. Portfolio 5, automatic screenshot capture, the final summary and individual review remain pending. No assessment was submitted.
