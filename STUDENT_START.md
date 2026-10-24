@@ -6,6 +6,8 @@
 
 The repository is already connected to this Codespace. Your own GitHub identity is used; the template author's account is not included. Copilot access/allowance is required for the currently connected AI option.
 
+After reviewing your results, run **`npm run save`** in the Codespace terminal. This copies the latest successful portfolio into its correctly named folder, commits that real checkpoint and pushes it to **your** repository. It excludes private run diagnostics. Repeat it after later changes you have reviewed; it does not invent historical commits.
+
 If the page does not start, run `npm run workspace` in the Codespace terminal. Keep port 4310 **Private**. Stop your Codespace after using it to stop consuming compute time.
 
 **Current scope:** Portfolio 1 generation works. Portfolios 2–5, automatic screenshots and the final summary are still being built. Review all generated work before using it in your assessment.

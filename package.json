@@ -9,6 +9,7 @@
     "start": "node server.mjs",
     "setup:workspace": "node scripts/setup-workspace.mjs",
     "workspace": "node scripts/start-workspace.mjs",
+    "save": "node scripts/save-portfolio.mjs",
     "test": "node --test test/*.test.mjs",
     "test:copilot": "node scripts/test-copilot.mjs",
     "test:postgres": "node scripts/test-postgres.mjs"
