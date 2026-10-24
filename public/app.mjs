@@ -102,10 +102,15 @@ document.querySelector('#validate-case').addEventListener('click',async()=>{
 
 let pilotConfig=null,pilotBusy=false,currentJob=null;
 const runQueries=document.querySelector('#run-queries');
+const runTransactions=document.querySelector('#run-transactions');
 const runPilot=document.querySelector('#run-pilot');
 function busy(value){pilotBusy=value;for(const field of form.elements)field.disabled=value;runPilot.disabled=value||!pilotConfig?.enabled;}
 function displayJob(job){
   currentJob=job;
+  document.querySelector('#transaction-controls').hidden=job.portfolio2?.status!=='complete';
+  runTransactions.disabled=job.portfolio2?.status!=='complete'||['running','complete'].includes(job.portfolio3?.status);
+  runTransactions.textContent=job.portfolio3?.status==='complete'?'Portfolio 3 complete':['failed','interrupted'].includes(job.portfolio3?.status)?'Retry Portfolio 3':'Run Portfolio 3';
+  document.querySelector('#transaction-message').textContent=job.portfolio3?`${job.portfolio3.status}: ${job.portfolio3.message}`:'';
   document.querySelector('#query-controls').hidden=job.status!=='complete';
   runQueries.disabled=job.status!=='complete'||job.portfolio2?.status==='running'||job.portfolio2?.status==='complete';
   runQueries.textContent=job.portfolio2?.status==='complete'?'Portfolio 2 complete':job.portfolio2?.status==='failed'||job.portfolio2?.status==='interrupted'?'Retry Portfolio 2':'Run Portfolio 2';
@@ -126,7 +131,7 @@ async function followJob(id){
       if(response.status===404){sessionStorage.removeItem('case-generator-job');document.querySelector('#pilot-result').hidden=false;document.querySelector('#pilot-message').textContent='The server restarted. Earlier files remain on disk; start a new run when ready.';busy(false);return;}
       if(!response.ok)throw new Error(job.error||'Could not read the run.');
       failures=0;displayJob(job);
-      if(job.status!=='running'&&job.portfolio2?.status!=='running'){busy(false);return;}
+      if(job.status!=='running'&&job.portfolio2?.status!=='running'&&job.portfolio3?.status!=='running'){busy(false);return;}
     }catch(error){
       if(++failures>=3){document.querySelector('#pilot-message').textContent=`Progress connection stopped: ${error.message} Saved output remains on disk. Reload to reconnect; do not start a duplicate run.`;busy(false);return;}
     }
@@ -166,4 +171,14 @@ runQueries.addEventListener('click',async()=>{
     const job=await response.json();if(!response.ok)throw new Error(job.error||'Could not start Portfolio 2.');
     displayJob(job);await followJob(job.id);
   }catch(error){document.querySelector('#query-message').textContent=error.message;runQueries.disabled=false;busy(false);}
+});
+
+runTransactions.addEventListener('click',async()=>{
+  if(pilotBusy||currentJob?.portfolio2?.status!=='complete')return;
+  busy(true);runTransactions.disabled=true;
+  try{
+    const response=await fetch(`/api/pilot/jobs/${currentJob.id}/transactions`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({allowRun:true})});
+    const job=await response.json();if(!response.ok)throw new Error(job.error||'Could not start Portfolio 3.');
+    displayJob(job);await followJob(job.id);
+  }catch(error){document.querySelector('#transaction-message').textContent=error.message;runTransactions.disabled=false;busy(false);}
 });
