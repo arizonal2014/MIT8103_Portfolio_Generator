@@ -2,9 +2,9 @@
 
 The assessment assigns 7 marks to practical transaction and concurrency work: commit, rollback, isolation and a concurrency problem or control mechanism. This feature covers codelab steps 14 and 15.
 
-1. Finish Portfolio 2, then click **Run Portfolio 3** in the app.
-2. Open **View Portfolio 3 commit and rollback**, then **View Portfolio 3 concurrency comparison**.
-3. Review the SQL, values and explanation. Run `npm run save` in the Codespace terminal to commit and push your reviewed output.
+1. Choose **Generate my portfolio**. The guided run executes Portfolio 3 after its prerequisites.
+2. Open the Portfolio 3 report links and inspect the saved scripts and results.
+3. Leave **Save real checkpoints** checked to push completed stages to your own private repository. Use `npm run save` if saving manually.
 
 No extra AI request is needed. Files use your name and ID under `portfolio-3-transactions-concurrency/`.
 
@@ -22,6 +22,4 @@ Both sessions use **READ COMMITTED**. The report captures their actual PostgreSQ
 
 `CommitRollback.sql` reproduces the first exercise after running the Portfolio 1 schema, seed and Portfolio 3 setup in a fresh database. `Concurrency.sql` is a numbered two-session script. Follow its blocks in two psql terminals connected to that same database. Session A and B logs preserve the actual automated run.
 
-Use only two screenshots: the commit/rollback results and the combined concurrency comparison. After saving the portfolio, open your named folder in the Codespace Explorer, then `portfolio-3-transactions-concurrency/screenshots`. Right-click **screenshots → Upload** and choose your images. Name them `Surname_Firstname_StudentID_P3_CommitRollback.png` and `Surname_Firstname_StudentID_P3_ConcurrencyComparison.png`, replacing the name and ID. Keep `.jpg` if that is the original format. Commit and push the images through Source Control.
-
-Automatic screenshots remain pending; HTML, JSON, SQL and session logs are saved automatically. Failures remain visible and do not complete the two stages. The temporary database is removed after the run.
+Two screenshots are captured automatically from the saved commit/rollback and concurrency pages. They use your name/ID prefix under `portfolio-3-transactions-concurrency/screenshots/`. HTML, JSON, SQL and session logs remain the underlying evidence. Failures stay visible and do not complete these stages. The temporary database is removed after the exercise.

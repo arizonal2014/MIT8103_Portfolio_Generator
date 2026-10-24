@@ -2,10 +2,9 @@
 
 The assessment assigns 7 marks to SQL queries and results, execution plans, optimisation and a short performance comparison. This feature covers steps 12 and 13 of the codelab.
 
-1. Complete your case generation in the app.
-2. Click **Run Portfolio 2**. No extra AI request is needed.
-3. Open **View Portfolio 2 query results**, then **View Portfolio 2 index comparison**.
-4. Review the SQL and explanation. Run `npm run save` in your Codespace to save the reviewed output to your repository.
+1. Choose **Generate my portfolio**. The guided run executes Portfolio 2 after its prerequisites.
+2. Open the Portfolio 2 report links and inspect the saved scripts and results.
+3. Leave **Save real checkpoints** checked to push completed stages to your own private repository. Use `npm run save` if saving manually.
 
 Files are placed in `Surname_Firstname_StudentID/portfolio-2-query-optimisation/` with your name/ID prefix.
 
@@ -15,6 +14,6 @@ The second page compares one lookup before and after a B-tree index. A separate 
 
 Three measured runs per phase, median execution time, plan nodes, buffer counts, identical result checks and index size are saved. The planner is free to choose a sequential scan. A slower or unchanged result is reported honestly. This small warm-cache experiment does not establish production performance.
 
-Only two screenshots are suggested: query results and the combined before/after comparison. After `npm run save`, open your named folder in the Codespace Explorer, then `portfolio-2-query-optimisation/screenshots`. Right-click `screenshots`, choose **Upload**, and select your two images. Use `Surname_Firstname_StudentID_P2_QueryResults.png` and `Surname_Firstname_StudentID_P2_IndexComparison.png`, replacing the name and ID; keep `.jpg` if that is your original image format. Commit and push the images through Source Control. Automatic screenshots are still pending; HTML, JSON and SQL evidence are saved automatically.
+Two screenshots are captured automatically from the saved query-results and index-comparison pages. They use your name/ID prefix under `portfolio-2-query-optimisation/screenshots/`. HTML, JSON, SQL and raw plans remain the underlying evidence.
 
 If an experiment fails, the app shows the error and offers **Retry Portfolio 2**. It retains Portfolio 1 and diagnostics and does not mark the query stages complete. A server restart restores completed result links; interrupted runs require an explicit retry.

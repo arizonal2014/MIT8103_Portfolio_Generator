@@ -2,9 +2,9 @@
 
 The assessment assigns 7 marks to a NoSQL model for the same case study, implementation evidence and an explanation of why the model is suitable. This feature covers codelab steps 16 and 17.
 
-1. Finish Portfolio 3, then click **Run Portfolio 4**.
-2. Open **View Portfolio 4 MongoDB document model** and **View Portfolio 4 MongoDB results**.
-3. Review the documents, queries and explanation. Run `npm run save` to commit and push your reviewed output.
+1. Choose **Generate my portfolio**. The guided run executes Portfolio 4 after its prerequisites.
+2. Open the Portfolio 4 report links and inspect the saved scripts and results.
+3. Leave **Save real checkpoints** checked to push completed stages to your own private repository. Use `npm run save` if saving manually.
 
 A new Codespace prepares MongoDB automatically. For an existing workspace, run `npm run setup:workspace` once if the app says the MongoDB image is missing, then retry. The lab uses MongoDB 7.0 inside Docker; no additional AI request is needed.
 
@@ -24,6 +24,4 @@ The model explanation covers why MongoDB suits these documents and the trade-off
 
 The generated `Execute.js` creates a collection, inserts the documents, runs four queries and checks two expected rejections. To replay it, connect mongosh to a fresh empty database and run the file with `--file`. The script also works with **MongoDB Atlas or another MongoDB server** using your own mongosh connection. The app's automatic route currently uses its temporary local container; it does not collect Atlas connection strings. Keep credentials out of committed files.
 
-Use two screenshots: the document model and MongoDB results. After `npm run save`, open your named folder in Codespace Explorer, then `portfolio-4-nosql/screenshots`. Right-click **screenshots → Upload** and select your images. Use `Surname_Firstname_StudentID_P4_DocumentModel.png` and `Surname_Firstname_StudentID_P4_MongoDBResults.png`, replacing the name and ID. Keep `.jpg` if that is the original format. Commit and push the images through Source Control.
-
-Automatic screenshots remain pending. Extended JSON documents, the executable mongosh script, actual results, server/output logs and the explanation are saved automatically with your filename prefix. The temporary MongoDB container and its anonymous volumes are removed after the run.
+One screenshot is captured automatically from the saved MongoDB-results page under `portfolio-4-nosql/screenshots/`. The document-model report, Extended JSON, executable mongosh script, actual results and logs are also saved with your filename prefix. The temporary MongoDB container and its anonymous volumes are removed after the exercise.
