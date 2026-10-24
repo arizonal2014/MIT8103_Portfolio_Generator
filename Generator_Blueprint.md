@@ -1,6 +1,6 @@
 # Portfolio generator blueprint
 
-Status: the local app accepts free-text case studies and connects Copilot model generation, explicit execution packages, real PostgreSQL checks, model-derived ER diagrams, worked normalisation and named files. A typed library case passed the live browser flow. See Verification.md and Free_Case_Workflow.md. GitHub/Codespaces integration, automatic screenshot capture, Portfolios 2–5 and final documents remain unfinished.
+Status: the local app accepts free-text case studies and connects Copilot model generation, explicit execution packages, real PostgreSQL checks, model-derived ER diagrams, worked normalisation and named files. A typed library case passed the live browser flow. See Verification.md and Free_Case_Workflow.md. The public GitHub template, automatic Codespaces setup and reviewed-output save/push passed a separate-account browser test. Automatic screenshot capture, Portfolios 2–5 and final documents remain unfinished.
 
 Students enter their own case study. The active route no longer uses the hospital gate, layout or fixed execution bindings. It generates model-specific rules, records and rejection tests and validates them against actual PostgreSQL behaviour. Input is free text, while supported model/rule shapes and resource limits remain bounded; unsupported structures stop visibly rather than being silently substituted. This does not establish unattended success for every possible case description.
 
@@ -62,7 +62,7 @@ The execution runner is deterministic where practical: it runs saved files, chec
 
 ## 5. Mapping all 19 codelab steps
 
-Source: the numbered files in [MIT8103_Codelab](../MIT8103_Codelab/README.md), read at revision `619af2bb8394ad020fc29223acaedf80f3423a61`. Existing library numbers are test-fixture examples, not required answers for another scenario.
+Source: the numbered files in [MIT8103_Codelab](https://github.com/arizonal2014/MIT8103_Codelab), read at revision `619af2bb8394ad020fc29223acaedf80f3423a61`. Existing library numbers are test-fixture examples, not required answers for another scenario.
 
 | Step | Input | Proposed action | Success check and saved evidence |
 | --- | --- | --- | --- |
@@ -161,7 +161,7 @@ This blueprint supports learning, reproducible runs and review. Whether fully ge
 
 Implementation references to recheck when building:
 
-- [Current codelab and worked example](../MIT8103_Codelab/README.md).
+- [Current codelab and worked example](https://github.com/arizonal2014/MIT8103_Codelab).
 - [GitHub manually triggered workflows](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow).
 - [GitHub PostgreSQL service containers](https://docs.github.com/en/actions/tutorials/use-containerized-services/create-postgresql-service-containers).
 - [Gemini CLI authentication](https://geminicli.com/docs/get-started/authentication/).

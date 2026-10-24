@@ -8,9 +8,9 @@
 
 See [the short student guide](STUDENT_START.md). The template author’s account and generated student files are not included. Each student uses their own Codespace and GitHub/Copilot account.
 
-Local prototype for a personalised database portfolio generator. Enter your own case study: the hospital-only restriction has been removed. The current flow generates and validates the case model, explicit rules, sample data and rejection tests, then runs PostgreSQL and builds the ER diagram, normalisation and named Portfolio 1 files. Portfolios 2–5 are still pending.
+A personalised database portfolio generator for GitHub Codespaces or a local computer. Enter your own case study: the hospital-only restriction has been removed. The current flow generates and validates the case model, explicit rules, sample data and rejection tests, then runs PostgreSQL and builds the ER diagram, normalisation and named Portfolio 1 files. Portfolios 2–5 are still pending.
 
-The existing [19-step codelab](../MIT8103_Codelab/README.md) remains unchanged. This project maps that guide into an automated workflow running in each student's own workspace.
+The existing [19-step codelab](https://github.com/arizonal2014/MIT8103_Codelab) remains unchanged. This project maps that guide into an automated workflow running in each student's own workspace.
 
 Read the [generator blueprint](Generator_Blueprint.md), including the 19-step map, screenshot plan and first implementation milestone.
 
@@ -30,7 +30,7 @@ Open the printed local URL, normally http://127.0.0.1:4310. Enter dummy details 
 
 Live runs save under `runs/case-run-<unique-id>/<workspace-id>/Surname_Firstname_StudentID/`. The ID prevents overwrites. Portfolio 1 receives the generated files and actual logs. Steps 3–10 are completed after their checks pass; individual review and later portfolios remain pending. The separate scaffold-only button creates folders and a wholly pending plan without contacting AI or PostgreSQL.
 
-Generated details stay under ignored `runs/`. Live generation contacts Copilot and creates/removes an isolated PostgreSQL container. No accounts or GitHub repositories are created, and nothing is committed, pushed or submitted. The server binds to loopback. Codespaces deployment has not yet been verified.
+Generated details stay under ignored `runs/` until you choose **`npm run save`** after review. That command copies the named portfolio output, commits a real checkpoint and pushes it to your own repository. The model diagnostics stay excluded. Live generation contacts Copilot and creates/removes an isolated PostgreSQL container. No assessment is submitted automatically. Codespaces uses a private forwarded port; local desktop runs bind to loopback.
 
 Browser errors appear beside the relevant fields. An unresponsive page may mean the local server stopped. A write error may mean insufficient disk space or workspace permissions; any partial run is retained for inspection, and retries create a new run.
 
@@ -48,4 +48,4 @@ Select a tool and click **Check selected tool locally**. This only looks for its
 
 The [connection notes](Provider_Connections.md) describe Copilot and its saved responses. Enable live generation with `MIT8103_PILOT_ACCOUNT=YOUR_GITHUB_LOGIN npm start`, then follow [the current free-case guide](Free_Case_Workflow.md). The server verifies that signed-in account. Without this setting, generation stays disabled. Gemini and Codex live adapters remain untested.
 
-All 80 local tests pass. A freely typed college-library case passed the live browser flow, including four tables, eight seed records and thirteen exact constraint-rejection checks. A separate student-enrolment fixture passed real PostgreSQL tests and produced a composite-key 2NF split. See [verification](Verification.md). The [hospital milestone](Design_Artifacts.md) is historical; current code no longer uses its fixed model or layout. Codespaces/GitHub integration, remaining portfolios, automatic screenshots and the final summary remain unfinished.
+All 87 tests pass locally and in a real student Codespace. A freely typed college-library case passed the live browser flow, including four tables, eight seed records and thirteen exact constraint-rejection checks. A separate student-enrolment fixture passed real PostgreSQL tests and produced a composite-key 2NF split. See [verification](Verification.md). The [hospital milestone](Design_Artifacts.md) is historical; current code no longer uses its fixed model or layout. The GitHub template, Codespaces startup and reviewed-output save/push have been browser-tested using a separate account. An equipment-rental case created three tables and passed twenty constraint-rejection checks there. Remaining portfolios, automatic screenshots and the final summary remain unfinished.

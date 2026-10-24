@@ -12,9 +12,9 @@ Gemini, Codex and Copilot are equal selectable options. There is no automatic de
 
 `GET /api/providers` returns these local readiness checks. `POST /api/provider/prepare` accepts only `provider` and `caseStudy`, and returns a prompt with `submitted: false`. These routes remain read-only/unsent preparation. The retained `/api/pilot/start` route now runs the free-text case workflow; it is enabled only for the server-configured Copilot account. See [current workflow](Free_Case_Workflow.md).
 
-These checks are for the machine hosting the local Node server, not proof that a student's future Codespace has the same tools. Users must avoid putting real personal or clinical information in the free-text scenario itself.
+These readiness checks describe the machine hosting the Node server. Copilot generation has also passed a real Codespaces test using that workspace account's own authentication; see [verification](Verification.md). Users must avoid putting real personal or clinical information in the free-text scenario itself.
 
-## Still required before a live connection
+## Connection requirements
 
 1. Test each supported CLI's version and non-interactive response format in the intended Codespace.
 2. Let the student complete the provider's own sign-in; never collect passwords or copy authentication caches into the project.

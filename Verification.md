@@ -1,12 +1,12 @@
 # Generator verification
 
-Current scope: free-text case generation through Copilot, restricted execution packages, actual PostgreSQL schema/data/rejection checks, case-derived ER diagrams and worked normalisation, connected in the local browser app. The hospital-only gate and fixed production model/layout have been removed. No repository write or submission operation was executed. Remaining portfolios, GitHub/Codespaces integration and automatic screenshots are unfinished.
+Current scope: free-text case generation through Copilot, restricted execution packages, actual PostgreSQL schema/data/rejection checks, case-derived ER diagrams and worked normalisation, connected in the local browser app. The hospital-only gate and fixed production model/layout have been removed. GitHub template creation, Codespaces startup and reviewed-output commit/push have also been verified using a separate browser account. Remaining portfolios and automatic screenshots are unfinished. No assessment was submitted.
 
 ## Automated checks
 
 Initial scaffold: six tests passed, zero failed. The tests cover names and leading-zero IDs, invalid input and unsafe paths, Unicode names and filename size, 19 pending stages, named folders and screenshot plans, repeated-run isolation, local HTTP serving, validation errors and rejection of cross-origin writes.
 
-Current suite: `npm test` passes 80 tests with zero failures. Checks cover models, provider isolation, restricted SQL bindings, execution packages, valid-seed preflight, exact rejection targets, numeric constraints, workflow guards, named artifacts and restored file links. Design tests cover differing entity counts, case-derived relationships, unchanged 2NF, a composite-key 2NF split, redundant superkeys, reconstruction, fingerprints, missing data and escaped values. Unit tests use fixtures/mocks and do not contact models or databases; real runs are recorded separately below.
+Current suite: `npm test` passes 87 tests with zero failures. Checks cover models, provider isolation, restricted SQL bindings, execution packages, valid-seed preflight, exact rejection targets, numeric constraints, workflow guards, named artifacts and restored file links. Design tests cover differing entity counts, case-derived relationships, unchanged 2NF, a composite-key 2NF split, redundant superkeys, reconstruction, fingerprints, missing data and escaped values. Unit tests use fixtures/mocks and do not contact models or databases; real runs are recorded separately below.
 
 `node --check server.mjs` and `node --check public/app.mjs` completed successfully.
 
@@ -30,7 +30,7 @@ The provider browser check selected Gemini for a fictional hospital scenario. It
 
 ## Not verified or built yet
 
-Gemini/Codex authentication and generation; arbitrary-case SQL execution; MongoDB execution; concurrent-session orchestration; automatic screenshot capture; PDF generation; GitHub or Codespaces integration; package download; student submission. The form's screenshot feature still creates a plan only. Pilot screenshots were captured separately with browser tooling. Readiness checks and prompt previews must not be confused with connected provider execution.
+Gemini/Codex authentication and generation; unrestricted-case SQL execution beyond the supported model profile; MongoDB execution; concurrent-session orchestration; automatic screenshot capture; PDF generation; package download; student submission. The form's screenshot feature still creates a plan only. Pilot screenshots were captured separately with browser tooling. Readiness checks and prompt previews must not be confused with connected provider execution.
 
 ## Live Copilot attempts
 
@@ -119,4 +119,25 @@ Completed case runs and their known file links were restored after restarting th
 
 Development screenshots were saved both in `verification/` and the prefixed Portfolio 1 `screenshots/` folder. `DevelopmentScreenshots.json` records their hashes and that capture was performed by browser tooling, not automatically by the runner. The live server remains on loopback for user testing. This is the complete current Portfolio 1 generation path, not all nineteen steps or a completed assessment submission.
 
-The existing codelab remained at revision `619af2bb8394ad020fc29223acaedf80f3423a61` with a clean working tree after the blueprint work. This new generator directory is local and has not been committed or pushed.
+The existing codelab remained at revision `619af2bb8394ad020fc29223acaedf80f3423a61` with a clean working tree after the blueprint work. At that earlier checkpoint the generator was local and unpublished; the later Codespaces milestone below records publication and testing.
+
+
+## GitHub template and real Codespaces verification — 24 October 2026
+
+The [public generator repository](https://github.com/arizonal2014/MIT8103_Portfolio_Generator) is enabled as a template. The signed-in Chrome account, `harrson2026`, created a separate private copy, [Cole_Jamie_000456](https://github.com/harrson2026/Cole_Jamie_000456), through **Use this template**. All student details in this test are fictional.
+
+Codespace `silver-cod-vpw6jppwqxjvhpjwx` installed dependencies, prepared PostgreSQL and started the app on port 4310 automatically. Node v22.17.0 and Docker 29.9.2-2 were observed. The forwarded app retained private visibility. Copilot used that Codespace account's own GitHub authentication; no local credentials were transferred. All 87 automated tests passed inside the Codespace as well as locally.
+
+A freely typed equipment-rental case completed job `7431420a-bef7-4792-bbd4-24c8d016c37d`. The generated database had three tables, and twenty invalid-record checks were correctly rejected. Evidence reported cleanup of the owned container and anonymous volumes. The generated ER diagram, normalisation, schema, tests and logs were available through the app. This verifies Portfolio 1 execution; later portfolios remained pending.
+
+![Completed equipment-rental generation in the student Codespace](verification/Codespaces_Generator_Result.jpg)
+
+After review, `npm run save` copied only the named output folder, committed the actual checkpoint and pushed it to the private copy. The [saved Portfolio 1 folder](https://github.com/harrson2026/Cole_Jamie_000456/tree/main/Cole_Jamie_000456/portfolio-1-database-design) was verified in Chrome at commit `cf3128e613409d2fe368bc55f1403f3d651b0546`. Ignored run diagnostics and workspace server state were excluded. No historical timestamps were invented.
+
+![Save command and successful push in Codespaces](verification/Codespaces_Save_Result.jpg)
+
+![Saved named files in the private student repository](verification/GitHub_Saved_Portfolio.jpg)
+
+The test copy was created while the save command was still being developed. Its save-command files were fetched from the published template, reviewed and committed before the final test. Fresh template copies already contain these files and need no manual fetch.
+
+Automatic screenshot capture is still pending: the three images above were captured separately through browser tooling. They document this verification run and are not presented as student-captured evidence.

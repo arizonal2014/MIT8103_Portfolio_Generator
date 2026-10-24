@@ -1,14 +1,14 @@
 # Run your own case study
 
-The local generator accepts a free-text case study. It no longer requires the hospital scenario or copies its fixed model. The optional library-example button is only a starting suggestion.
+The generator accepts a free-text case study. It no longer requires the hospital scenario or copies its fixed model. The optional library-example button is only a starting suggestion.
 
 ## Student flow in the current prototype
 
-1. Open **http://127.0.0.1:4310/** while the local server is running. Enter first name, surname, student ID and the chosen system/operations.
+1. Follow [Start your portfolio](STUDENT_START.md) to open your own Codespace, or open **http://127.0.0.1:4310/** while running locally. Enter first name, surname, student ID and the chosen system/operations.
 2. Select **Copilot**, then click **Generate and test my database**.
 3. Follow progress and open the generated case description, design, ER diagram, normalisation and real database results. Additional SQL and logs are under **SQL, logs and other files**.
 
-The server currently runs on the host computer. GitHub repositories, Codespaces, automatic commits, Portfolios 2–5, automatic screenshots and the final summary are not connected yet. Nothing is submitted or published.
+The server runs inside your Codespace or on your own computer. After reviewing a successful run, use `npm run save` to commit and push the named output to your own repository. Portfolios 2–5, automatic screenshots and the final summary remain pending. No assessment is submitted automatically.
 
 ## Start locally
 
@@ -39,6 +39,6 @@ The normalisation example can cover one suitable relationship branch; the final 
 
 The model has no tools, project-write access or database credentials. Its GitHub OAuth token stays in memory. Docker receives no AI or GitHub credential. Each temporary database has no published ports, network or host mounts and uses a non-superuser owner for generated SQL. Only the owned container and anonymous volumes are removed afterwards. Docker itself is a privileged host capability.
 
-The run saves the original model, execution package, schema, seed SQL, negative-test SQL, logs, catalog, evidence, diagram, normalisation and progress manifest. New database reports also include execution-package/schema digests. Automatic screenshots and GitHub history are later stages, not inferred from these files.
+The run saves the original model, execution package, schema, seed SQL, negative-test SQL, logs, catalog, evidence, diagram, normalisation and progress manifest. New database reports also include execution-package/schema digests. Automatic screenshots remain pending. GitHub history is created only when you explicitly save a reviewed checkpoint; execution logs do not imply a commit.
 
 The server restores completed case runs and their known file links after restart. It checks that restored files remain inside the saved run output directory. A previously running job is marked interrupted; it is never silently rerun. A run ID prevents repeat clicks from duplicating a known run, and only one run can execute at a time.
