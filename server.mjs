@@ -33,6 +33,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
       if(req.method==='GET'&&url.pathname==='/api/health'){json(200,{service:'mit8103-generator',workspace:root+path.sep,pid:process.pid});return;}
       await workflow.ready;
       if(req.method==='GET'&&url.pathname==='/api/pilot/config'){json(200,{enabled:workflow.enabled,account:workflow.account,scenario:'A library borrowing system for members, books, physical copies and loans. Keep borrowing and return history and allow only one open loan per copy.'});return;}
+      const queryRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})\/optimise$/);
       const jobRoute=url.pathname.match(/^\/api\/pilot\/jobs\/([a-f0-9-]{36})(?:\/files\/([a-z-]+))?$/);
       if(req.method==='GET'&&jobRoute){
         if(!jobRoute[2]){const job=workflow.get(jobRoute[1]);json(job?200:404,job||{error:'Run not found in this server session. Saved files remain on disk.'});return;}
@@ -49,7 +50,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
         const data = await readFile(path.join(root, file));
         res.writeHead(200, { ...securityHeaders, 'Content-Type': `${type}; charset=utf-8` }); res.end(data); return;
       }
-      if (req.method !== 'POST' || !['/api/scaffold','/api/case-spec/check','/api/provider/prepare','/api/pilot/start'].includes(url.pathname)) { json(404, { error: 'Not found.' }); return; }
+      if (req.method !== 'POST' || !queryRoute&&!['/api/scaffold','/api/case-spec/check','/api/provider/prepare','/api/pilot/start'].includes(url.pathname)) { json(404, { error: 'Not found.' }); return; }
       // The UI is local/private. Reject cross-origin writes and non-JSON forms.
       const origin = req.headers.origin;
       if (!access.originAllowed(origin,req.headers.host) || req.headers['content-type']?.split(';')[0] !== 'application/json') {
@@ -63,6 +64,7 @@ export function createServer({ runsDirectory = path.join(root, 'runs'), pilotAcc
       const body=Buffer.concat(chunks).toString('utf8');
       let input;
       try { input = JSON.parse(body); } catch { json(400, { error: 'The form could not be read. Try again.' }); return; }
+      if(queryRoute){json(202,await workflow.startQueries(queryRoute[1],input));return;}
       if(url.pathname==='/api/case-spec/check'){const result=validateCaseSpec(input?.spec);json(result.valid?200:422,result);return;}
       if(url.pathname==='/api/provider/prepare'){json(200,prepareProviderRequest(input));return;}
       if(url.pathname==='/api/pilot/start'){json(202,await workflow.start(input));return;}

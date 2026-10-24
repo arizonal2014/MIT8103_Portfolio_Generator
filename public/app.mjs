@@ -100,10 +100,16 @@ document.querySelector('#validate-case').addEventListener('click',async()=>{
   }catch{caseStatus.textContent='Could not reach the local server.';}
 });
 
-let pilotConfig=null,pilotBusy=false;
+let pilotConfig=null,pilotBusy=false,currentJob=null;
+const runQueries=document.querySelector('#run-queries');
 const runPilot=document.querySelector('#run-pilot');
 function busy(value){pilotBusy=value;for(const field of form.elements)field.disabled=value;runPilot.disabled=value||!pilotConfig?.enabled;}
 function displayJob(job){
+  currentJob=job;
+  document.querySelector('#query-controls').hidden=job.status!=='complete';
+  runQueries.disabled=job.status!=='complete'||job.portfolio2?.status==='running'||job.portfolio2?.status==='complete';
+  runQueries.textContent=job.portfolio2?.status==='complete'?'Portfolio 2 complete':job.portfolio2?.status==='failed'||job.portfolio2?.status==='interrupted'?'Retry Portfolio 2':'Run Portfolio 2';
+  document.querySelector('#query-message').textContent=job.portfolio2?`${job.portfolio2.status}: ${job.portfolio2.message}`:'';
   document.querySelector('#pilot-result').hidden=false;
   document.querySelector('#pilot-message').textContent=`${job.status}: ${job.message}`;
   renderList('#pilot-steps',job.steps.map(s=>`${s.name} — ${s.status}`));
@@ -120,7 +126,7 @@ async function followJob(id){
       if(response.status===404){sessionStorage.removeItem('case-generator-job');document.querySelector('#pilot-result').hidden=false;document.querySelector('#pilot-message').textContent='The server restarted. Earlier files remain on disk; start a new run when ready.';busy(false);return;}
       if(!response.ok)throw new Error(job.error||'Could not read the run.');
       failures=0;displayJob(job);
-      if(job.status!=='running'){busy(false);return;}
+      if(job.status!=='running'&&job.portfolio2?.status!=='running'){busy(false);return;}
     }catch(error){
       if(++failures>=3){document.querySelector('#pilot-message').textContent=`Progress connection stopped: ${error.message} Saved output remains on disk. Reload to reconnect; do not start a duplicate run.`;busy(false);return;}
     }
@@ -151,3 +157,13 @@ runPilot.addEventListener('click',async()=>{
     const id=sessionStorage.getItem('case-generator-job');if(id){busy(true);await followJob(id);}
   }catch{document.querySelector('#pilot-config').textContent='Could not check generation availability. Check the local server.';}
 })();
+
+runQueries.addEventListener('click',async()=>{
+  if(pilotBusy||!currentJob||currentJob.status!=='complete')return;
+  busy(true);runQueries.disabled=true;
+  try{
+    const response=await fetch(`/api/pilot/jobs/${currentJob.id}/optimise`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({allowRun:true})});
+    const job=await response.json();if(!response.ok)throw new Error(job.error||'Could not start Portfolio 2.');
+    displayJob(job);await followJob(job.id);
+  }catch(error){document.querySelector('#query-message').textContent=error.message;runQueries.disabled=false;busy(false);}
+});
