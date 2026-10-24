@@ -1,12 +1,12 @@
 # Generator verification
 
-Current scope: free-text case generation through Copilot, restricted execution packages, actual PostgreSQL schema/data/rejection checks, case-derived ER diagrams and worked normalisation, connected in the local browser app. The hospital-only gate and fixed production model/layout have been removed. GitHub template creation, Codespaces startup and reviewed-output commit/push have also been verified using a separate browser account. Portfolio 2 queries and indexing are now connected. Portfolios 3–5 and automatic screenshots are unfinished. No assessment was submitted.
+Current scope: free-text case generation through Copilot, restricted execution packages, actual PostgreSQL schema/data/rejection checks, case-derived ER diagrams and worked normalisation, connected in the local browser app. The hospital-only gate and fixed production model/layout have been removed. GitHub template creation, Codespaces startup and reviewed-output commit/push have also been verified using a separate browser account. Portfolio 2 queries/indexing and Portfolio 3 transactions/concurrency are connected. Portfolios 4 and 5 and automatic screenshots are unfinished. No assessment was submitted.
 
 ## Automated checks
 
 Initial scaffold: six tests passed, zero failed. The tests cover names and leading-zero IDs, invalid input and unsafe paths, Unicode names and filename size, 19 pending stages, named folders and screenshot plans, repeated-run isolation, local HTTP serving, validation errors and rejection of cross-origin writes.
 
-Current suite: `npm test` passes 92 tests with zero failures. Checks cover models, provider isolation, restricted SQL bindings, execution packages, valid-seed preflight, exact rejection targets, numeric constraints, workflow guards, named artifacts and restored file links. Design tests cover differing entity counts, case-derived relationships, unchanged 2NF, a composite-key 2NF split, redundant superkeys, reconstruction, fingerprints, missing data and escaped values. Unit tests use fixtures/mocks and do not contact models or databases; real runs are recorded separately below.
+Current suite: `npm test` passes 99 tests with zero failures. Checks cover models, provider isolation, restricted SQL bindings, execution packages, valid-seed preflight, exact rejection targets, numeric constraints, workflow guards, named artifacts and restored file links. Design tests cover differing entity counts, case-derived relationships, unchanged 2NF, a composite-key 2NF split, redundant superkeys, reconstruction, fingerprints, missing data and escaped values. Unit tests use fixtures/mocks and do not contact models or databases; real runs are recorded separately below.
 
 `node --check server.mjs` and `node --check public/app.mjs` completed successfully.
 
@@ -162,3 +162,25 @@ In Chrome, **Run Portfolio 2** completed the existing equipment-rental case in t
 `npm run save` committed and pushed the [Portfolio 2 folder](https://github.com/harrson2026/Cole_Jamie_000456/tree/main/Cole_Jamie_000456/portfolio-2-query-optimisation) at `18cef73377feddc35e9ca17f4dfba3a15a0a1580`. The two real browser captures were then added under its `screenshots/` folder and committed at `cb5df57e99e13605e8350de6afe85a5d0c0fe358`. The test-copy screenshot records explicitly identify these as separate browser captures during verification. They are not an automatic screenshot feature. Browser file upload required an additional extension permission, so the captured image bytes were placed through the Codespace terminal without changing that permission.
 
 Steps 12 and 13 are complete for these passing runs; Portfolio 1 individual review and Portfolios 3–5 remain pending. Failures show an error and permit an explicit retry. Saved links survive a server restart; a previously running query experiment is marked interrupted and not silently rerun.
+
+
+## Portfolio 3 — transactions and actual concurrent sessions
+
+Portfolio 3 reuses the saved case model and execution package without another AI request. It recreates the schema and rows in an isolated PostgreSQL container, selects the model's transaction entity and a saved row, and adds a temporary processing counter. The helper is clearly distinguished from the Portfolio 1 design and original business columns. The implemented method is row locking, even if the original model proposed another method; the report records both rather than claiming that the proposed business operation was implemented.
+
+All 99 automated tests passed locally and in the student Codespace. Additional tests cover case-specific row selection, ignoring operation prose as SQL, helper-name collisions, rejection of leaked/uncommitted updates and incorrect rollback/blocking results, distinct sessions and actual isolation, escaped evidence, restored artifact links, preservation of earlier portfolios, interrupted runs, and refusing an export while transactions are running.
+
+Real local PostgreSQL fixture runs passed for library borrowing (`postgres-transactions-da464a62-a6d4-4c4d-9850-efb1ea768cb5`) and student enrolment (`postgres-transactions-f52fdb1d-da78-4220-b782-b02eb9f4622c`). An earlier enrolment attempt (`postgres-transactions-71244e29-b58e-4614-a146-49d6573bf536`) stopped because the stdout completion marker arrived before separate stderr text containing the expected constraint name. The session launcher now merges psql's diagnostic output into its ordered output stream before applying completion markers. The failed attempt remains retained and was not marked as passing evidence.
+
+The local Chrome button also completed the existing freely typed college-library run, job `0d6f9a71-3e35-407c-b861-8db64170d9d6`, selecting `loans.loan_id=401`. Its actual run was `postgres-transactions-dbe3c50d-6105-4715-b624-f47164425179`. COMMIT preserved 1; another session saw 0 while that update was uncommitted. The later in-transaction value 11 was rolled back to 1 after CHECK failure 23514 and aborted-transaction state 25P02. The stale-read experiment finished at 2; locking before reading finished at 3. PostgreSQL reported session 125 waiting on session 126 with Lock/transactionid. All original case columns were checked unchanged. Owned containers and anonymous volumes were removed.
+
+
+In the private student Codespace, Chrome's **Run Portfolio 3** completed job `7431420a-bef7-4792-bbd4-24c8d016c37d`, selecting `rentals.rental_id=301`. The report completed at `2026-10-24T08:43:05.832Z`. COMMIT/rollback and visibility values matched the checks above. Session B (115) was observed waiting for Session A (116), with Lock/transactionid. Both used READ COMMITTED. The stale-read experiment finished at 2, and locking before reading finished at 3. All original case columns were verified unchanged and the owned container/volumes were removed.
+
+![Actual commit, isolation and rollback values](verification/Cole_Jamie_000456_P3_CommitRollback.jpg)
+
+![Actual two-session lost-update and locking comparison](verification/Cole_Jamie_000456_P3_ConcurrencyComparison.jpg)
+
+The two images were captured separately through browser tooling and placed in the run's named Portfolio 3 `screenshots/` folder. Their SHA-256 values and captured status were recorded in the evidence manifest. This is verification capture, not an automatic screenshot feature. `npm run save` exported the SQL, reports, both session logs, explanations and screenshots, then pushed the [private Portfolio 3 folder](https://github.com/harrson2026/Cole_Jamie_000456/tree/main/Cole_Jamie_000456/portfolio-3-transactions-concurrency) at real checkpoint `53d5d95612ef410c330787d4dc5c2c4135203b5c`. The GitHub folder and screenshot entries were checked in Chrome.
+
+Steps 14 and 15 are complete for these passing runs. Portfolios 4 and 5, automatic screenshots, the final summary and individual review remain pending. No assessment was submitted.
