@@ -32,7 +32,7 @@ function showPreflight(result){
  if(result.run){
   const p=document.createElement('p');p.textContent='Saved case: '+result.run.caseStudy;actions.before(p);p.className='saved-case';
   for(const old of panel.querySelectorAll('.saved-case'))if(old!==p)old.remove();
-  button(result.run.status==='complete'?'Open saved result':'Return to saved run',async()=>{try{storage.set(result.run.id);const job=await json('/api/pilot/jobs/'+result.run.id);viewingPipeline=false;display(job);await follow(job.id);}catch(error){showError(error);}});
+  button(result.run.status==='complete'?'Open saved result':'Return to saved run',async()=>{try{const job=await json('/api/pilot/jobs/'+result.run.id);storage.set(result.run.id);pending.clear();viewingPipeline=false;display(job);await follow(job.id);}catch(error){showError(error);}});
   if(result.run.canReviseCase&&result.run.caseStudy!==form.elements.namedItem('caseStudy').value.trim())button('Retry with revised case study',async()=>{
    if(waiting||following)return;const caseStudy=form.elements.namedItem('caseStudy').value.trim();waiting=true;busyDetails(true);
    try{await json('/api/pilot/jobs/'+result.run.id+'/continue',{allowRun:true,caseStudy,confirmedCaseStudy});storage.set(result.run.id);display(await json('/api/pilot/jobs/'+result.run.id));busyDetails(false);await follow(result.run.id);}catch(error){if(error.preflight)showPreflight(error.preflight);else showError(error);}finally{waiting=false;busyDetails(false);}
@@ -72,8 +72,12 @@ function display(job){
  const failed=['failed','interrupted'].includes(guided?.status)||['failed','interrupted'].includes(job.status);
  $('#build-error').hidden=!failed;$('#build-error').textContent=failed?guided?.message||job.message:'';
  $('#build-recovery').hidden=!failed;$('#build-recovery').textContent=failed?guided?.recovery?.hint||'Retry this saved run. Completed stages stay saved.':'';
+ if(failed&&guided?.recovery?.action==='copilot-settings'){
+  const link=document.createElement('a');link.href='https://github.com/settings/copilot';link.target='_blank';link.rel='noopener';link.textContent='Open Copilot settings ↗';
+  $('#build-recovery').append(document.createTextNode(' '),link);
+ }
  $('#reconnect-github').hidden=!failed||guided?.recovery?.action!=='connect';
- $('#revise-case').hidden=!failed||!guided?.canReviseCase;
+ $('#revise-case').hidden=!failed||!guided?.canReviseCase||guided?.recovery?.action==='copilot-settings';
  $('#retry').hidden=!failed||!guided?.pipeline?.length;$('#retry').disabled=running;
  renderPipeline(guided?.pipeline,job);
  const repo=guided?.repository;

@@ -17,3 +17,18 @@ If the repository already exists, use **Open existing repository** or **Return t
 Reloading reconnects to your saved run. It does not start a duplicate AI request. A retry preserves completed stages and commits. Existing work with the same repository name is left untouched.
 
 To restart the app, run `npm run workspace`. Stop the Codespace when finished.
+
+## Continue after a Copilot access error
+
+1. Open [Copilot settings](https://github.com/settings/copilot) in the same GitHub account connected to the generator. Check your Copilot plan and CLI access. If an organisation manages access, ask its administrator to enable it. Reconnecting GitHub alone does not remove a policy restriction.
+2. In the terminal of your **original generator Codespace**, update the generator:
+
+   ```bash
+   git pull --ff-only
+   ```
+
+   If Git reports local changes or a merge problem, keep your files and ask for help. Do not reset the repository. A personal copy needs the fix from the [generator repository](https://github.com/arizonal2014/MIT8103_Portfolio_Generator), rather than pulling an unchanged copy.
+3. Stop that Codespace, then reopen the **same Codespace** from [Your Codespaces](https://github.com/codespaces). This restarts the app with the updated code. Open **Ports → 4310 → Open in Browser** again.
+4. Your paused run should reappear with corrected guidance. Once Copilot access is enabled, select **Retry remaining stages**. If the form appears, enter the same details and choose **Return to saved run**.
+
+The existing repository, completed stages and commits are retained. Keep `runs/` and `.workspace-state/` in the original Codespace. The update corrects the message and recovery controls; it does not grant Copilot access or remove an organisation policy.
