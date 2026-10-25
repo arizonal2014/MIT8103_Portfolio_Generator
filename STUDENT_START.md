@@ -32,3 +32,7 @@ To restart the app, run `npm run workspace`. Stop the Codespace when finished.
 4. Your paused run should reappear with corrected guidance. Once Copilot access is enabled, select **Retry remaining stages**. If the form appears, enter the same details and choose **Return to saved run**.
 
 The existing repository, completed stages and commits are retained. Keep `runs/` and `.workspace-state/` in the original Codespace. The update corrects the message and recovery controls; it does not grant Copilot access or remove an organisation policy.
+
+## PostgreSQL connection closed during startup
+
+The startup fix waits for PostgreSQL to finish initialising before creating the database. If your failed run showed `Docker command exited 2` and its log shows `CREATE ROLE` followed by an administrator-shutdown message, update the original generator Codespace with `git pull --ff-only`. Stop and reopen that same Codespace, open port 4310, then choose **Retry remaining stages**. Keep your existing repository and run files. Copilot settings do not resolve this database startup error.
